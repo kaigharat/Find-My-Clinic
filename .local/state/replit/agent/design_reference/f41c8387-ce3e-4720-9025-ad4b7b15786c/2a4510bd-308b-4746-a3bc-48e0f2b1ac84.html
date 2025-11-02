@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My Clinic - Stop Waiting, Start Healing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0F766E',
+                        secondary: '#0EA5E9',
+                        accent: '#F97316',
+                        success: '#10B981'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<!-- @COMPONENT: App [main application wrapper] -->
+<body class="bg-white font-sans">
+    
+    <!-- @COMPONENT: Header [navigation and branding] -->
+    <nav class="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo and brand -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-map-marker-alt text-white text-lg"></i>
+                        <i class="fas fa-user-md text-white text-xs -ml-1 -mt-1"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">Find My Clinic</h1>
+                        <p class="text-xs text-gray-600">In need of care? We'll get you there.</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-primary transition-colors">Home</a>
+                    <a href="#patients" class="text-gray-700 hover:text-primary transition-colors">For Patients</a>
+                    <a href="#clinics" class="text-gray-700 hover:text-primary transition-colors">For Clinics</a>
+                    <a href="#about" class="text-gray-700 hover:text-primary transition-colors">About</a>
+                    <button class="bg-accent text-white px-6 py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors" data-event="click:handleFindClinic">
+                        Find a Clinic
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button class="md:hidden" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-gray-700"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- @COMPONENT: Hero [main value proposition] -->
+    <section id="home" class="bg-gradient-to-br from-primary/10 via-secondary/5 to-white py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+                        Stop Waiting,<br>
+                        <span class="text-primary">Start Healing</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                        Find nearby clinics, view real-time wait times, and join queues digitally. 
+                        Make healthcare visits predictable and stress-free.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                        <button class="bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-teal-800 transition-colors flex items-center justify-center" data-event="click:handlePatientJourney">
+                            <i class="fas fa-search mr-2"></i>
+                            Find a Clinic Now
+                        </button>
+                        <button class="bg-white text-primary border-2 border-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary hover:text-white transition-colors" data-event="click:handleClinicRegistration">
+                            <i class="fas fa-hospital mr-2"></i>
+                            List Your Clinic
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Visual -->
+                <!-- Modern healthcare facility with patients using mobile devices -->
+                <div class="relative">
+                    <img src="https://pixabay.com/get/gd046690f3e6ec35d84e0d44d8c86fc9f050bb4b3ff493a4db1d18279145d6edbd58c1b57f8e06e6e59d939645c727c2802a4f0843ef6b7b90847cf3097357cae_1280.jpg" 
+                         alt="Modern clinic waiting room with comfortable seating" 
+                         class="rounded-2xl shadow-2xl w-full" data-mock="true">
+                    
+                    <!-- Overlay stats -->
+                    <div class="absolute -bottom-6 left-6 right-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6 grid grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-primary" data-bind="stats.clinicsConnected">500+</div>
+                                <div class="text-sm text-gray-600">Clinics Connected</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-success" data-bind="stats.timesSaved">2.5 hrs</div>
+                                <div class="text-sm text-gray-600">Avg. Time Saved</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-secondary" data-bind="stats.patientsServed">10k+</div>
+                                <div class="text-sm text-gray-600">Patients Served</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Hero -->
+
+    <!-- @COMPONENT: ProblemSolution [problem statement and solution overview] -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <!-- The Problem -->
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-6">The Problem with Current Clinic Visits</h3>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                                <i class="fas fa-clock text-red-500 text-xl"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-2">Wasted Time in Queues</h4>
+                            <p class="text-gray-600">Hours spent waiting in crowded clinics with no idea when you'll be seen.</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                                <i class="fas fa-user-injured text-orange-500 text-xl"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-2">Staff Burnout</h4>
+                            <p class="text-gray-600">Healthcare workers overwhelmed by manual queue management and administrative chaos.</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                                <i class="fas fa-exclamation-triangle text-blue-500 text-xl"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-2">Poor Patient Experience</h4>
+                            <p class="text-gray-600">Unpredictable wait times leading to stress and frustration for patients seeking care.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Our Solution -->
+                <div class="bg-white rounded-2xl p-8 md:p-12 shadow-lg">
+                    <div class="text-center mb-12">
+                        <h3 class="text-3xl font-bold text-primary mb-4">Our Smart Solution</h3>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Find My Clinic bridges the information gap in local healthcare with real-time queue management 
+                            and intelligent wait time predictions.
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <!-- Clean, modern smartphone showing the app interface -->
+                            <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400" 
+                                 alt="Smartphone displaying healthcare app interface" 
+                                 class="rounded-xl shadow-lg w-full" data-mock="true">
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="fas fa-map text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-1">Real-Time Clinic Discovery</h4>
+                                    <p class="text-gray-600">Find nearby clinics instantly with live wait times and availability status.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="fas fa-mobile-alt text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-1">Digital Queue Management</h4>
+                                    <p class="text-gray-600">Get your queue token remotely and receive notifications when it's your turn.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-success rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="fas fa-qrcode text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-1">Hybrid QR System</h4>
+                                    <p class="text-gray-600">Seamless integration with physical QR standees for accessibility and convenience.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ProblemSolution -->
+
+    <!-- @COMPONENT: HowItWorks [dual journey explanation] -->
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-6">How It Works</h3>
+                    <p class="text-xl text-gray-600">Simple steps for both patients and clinics</p>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="flex justify-center mb-12">
+                    <div class="bg-gray-100 p-1 rounded-lg">
+                        <button id="patient-tab" class="px-6 py-3 rounded-md text-sm font-medium transition-colors bg-primary text-white">
+                            <i class="fas fa-user mr-2"></i>For Patients
+                        </button>
+                        <button id="clinic-tab" class="px-6 py-3 rounded-md text-sm font-medium transition-colors text-gray-700 hover:text-primary">
+                            <i class="fas fa-hospital mr-2"></i>For Clinics
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Patient Journey -->
+                <div id="patient-journey" class="space-y-8">
+                    <div class="grid md:grid-cols-5 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-search text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-primary rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Discover Clinics</h4>
+                            <p class="text-sm text-gray-600">Find nearby clinics on an interactive map</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-clock text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-primary rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">View Wait Times</h4>
+                            <p class="text-sm text-gray-600">See live, accurate wait times before leaving home</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-ticket-alt text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-primary rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Get Digital Token</h4>
+                            <p class="text-sm text-gray-600">Receive your queue number instantly</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-bell text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-primary rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Get Notifications</h4>
+                            <p class="text-sm text-gray-600">Receive alerts when it's almost your turn</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-check text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-success rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Check-in</h4>
+                            <p class="text-sm text-gray-600">Arrive at the clinic at the right time</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clinic Journey (Hidden by default) -->
+                <div id="clinic-journey" class="space-y-8 hidden">
+                    <div class="grid md:grid-cols-4 gap-8">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-sign-in-alt text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-secondary rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Easy Login</h4>
+                            <p class="text-sm text-gray-600">Access your admin panel or use WhatsApp bot</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-secondary rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Manage Queue</h4>
+                            <p class="text-sm text-gray-600">View and manage patient queue in real-time</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-sync text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-secondary rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Update Status</h4>
+                            <p class="text-sm text-gray-600">Keep wait times accurate with simple updates</p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-comments text-white text-xl"></i>
+                            </div>
+                            <div class="w-full h-1 bg-success rounded mb-4"></div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Communicate</h4>
+                            <p class="text-sm text-gray-600">Send automated notifications to patients</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HowItWorks -->
+
+    <!-- @COMPONENT: ClinicFinder [interactive map demonstration] -->
+    <section id="patients" class="py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-6">Find Clinics Near You</h3>
+                    <p class="text-xl text-gray-600 mb-8">Real-time availability and wait times at your fingertips</p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-1">
+                                <input type="text" placeholder="Enter your location..." 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                       data-bind="searchQuery" data-mock="true">
+                            </div>
+                            <button class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-teal-800 transition-colors" data-event="click:handleSearch">
+                                <i class="fas fa-search mr-2"></i>Search
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mock Map Interface -->
+                    <div class="relative h-96 bg-gray-100">
+                        <!-- Interactive map showing clinic locations with markers -->
+                        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=600" 
+                             alt="City map view with healthcare facility markers" 
+                             class="w-full h-full object-cover" data-mock="true">
+                        
+                        <!-- Clinic Cards Overlay -->
+                        <div class="absolute top-4 right-4 w-80 space-y-3 max-h-80 overflow-y-auto">
+                            <!-- @MAP: clinics.map(clinic => ( -->
+                            <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200" data-mock="true">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900" data-bind="clinic.name">City General Clinic</h4>
+                                        <p class="text-sm text-gray-600" data-bind="clinic.address">123 Main St, Downtown</p>
+                                    </div>
+                                    <span class="bg-success text-white px-2 py-1 rounded text-xs font-medium" data-bind="clinic.status">Open</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-primary" data-bind="clinic.waitTime">15 min</div>
+                                            <div class="text-xs text-gray-500">Wait Time</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-secondary" data-bind="clinic.queueSize">8</div>
+                                            <div class="text-xs text-gray-500">In Queue</div>
+                                        </div>
+                                    </div>
+                                    <button class="bg-accent text-white px-3 py-2 rounded text-sm font-medium hover:bg-orange-600 transition-colors" data-event="click:handleJoinQueue">
+                                        Join Queue
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200" data-mock="true">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">MedCare Center</h4>
+                                        <p class="text-sm text-gray-600">456 Oak Avenue</p>
+                                    </div>
+                                    <span class="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-medium">Busy</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-primary">45 min</div>
+                                            <div class="text-xs text-gray-500">Wait Time</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-lg font-bold text-secondary">23</div>
+                                            <div class="text-xs text-gray-500">In Queue</div>
+                                        </div>
+                                    </div>
+                                    <button class="bg-accent text-white px-3 py-2 rounded text-sm font-medium hover:bg-orange-600 transition-colors" data-event="click:handleJoinQueue">
+                                        Join Queue
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ClinicFinder -->
+
+    <!-- @COMPONENT: Features [key differentiators] -->
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-6">What Makes Us Different</h3>
+                    <p class="text-xl text-gray-600">Smart, inclusive, and accessible healthcare technology</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center group">
+                        <div class="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-qrcode text-white text-2xl"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-4">Hybrid QR System</h4>
+                        <p class="text-gray-600 mb-4">Seamless integration of digital access with physical QR standees at clinics, ensuring accessibility for everyone regardless of tech comfort level.</p>
+                        <div class="text-sm text-primary font-medium">Digital + Physical Access</div>
+                    </div>
+
+                    <div class="text-center group">
+                        <div class="w-20 h-20 bg-gradient-to-br from-secondary to-success rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-brain text-white text-2xl"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-4">Smart Predictions</h4>
+                        <p class="text-gray-600 mb-4">AI-powered predictive intelligence analyzes historical data and current patterns to provide the most accurate wait time estimates.</p>
+                        <div class="text-sm text-secondary font-medium">95%+ Accuracy Rate</div>
+                    </div>
+
+                    <div class="text-center group">
+                        <div class="w-20 h-20 bg-gradient-to-br from-success to-accent rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                            <i class="fab fa-whatsapp text-white text-2xl"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-4">Lite Mode Available</h4>
+                        <p class="text-gray-600 mb-4">WhatsApp and SMS integration for clinics with limited tech infrastructure, making our platform accessible to every healthcare provider.</p>
+                        <div class="text-sm text-success font-medium">No App Required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Features -->
+
+    <!-- @COMPONENT: ForClinics [clinic benefits and registration] -->
+    <section id="clinics" class="py-20 bg-gradient-to-br from-secondary/10 to-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-6">Transform Your Clinic Operations</h3>
+                    <p class="text-xl text-gray-600">Reduce administrative burden and improve patient satisfaction</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <!-- Modern clinic reception desk with digital displays -->
+                        <img src="https://images.unsplash.com/photo-1551190822-a9333d879b1f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&h=400" 
+                             alt="Modern clinic reception area with digital check-in system" 
+                             class="rounded-xl shadow-lg w-full" data-mock="true">
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-chart-line text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Efficient Digital Management</h4>
+                                    <p class="text-gray-600">Simple admin panel or WhatsApp bot integration for seamless queue management without complex training.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-success rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-user-friends text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Reduced Staff Burnout</h4>
+                                    <p class="text-gray-600">Eliminate manual queue management stress and reduce administrative chaos with automated patient flow.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-cogs text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Better Resource Allocation</h4>
+                                    <p class="text-gray-600">Optimize staff scheduling and improve operational efficiency with predictive patient flow data.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6">
+                            <button class="bg-accent text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-orange-600 transition-colors w-full sm:w-auto" data-event="click:handleClinicDemo">
+                                <i class="fas fa-play mr-2"></i>
+                                Request a Demo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ForClinics -->
+
+    <!-- @COMPONENT: Technology [platform credibility] -->
+    <section class="py-20 bg-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto text-center">
+                <h3 class="text-3xl font-bold mb-6">Built on Robust Technology</h3>
+                <p class="text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
+                    Enterprise-grade architecture designed for scalability, reliability, and seamless user experience
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-gray-800 p-6 rounded-xl">
+                        <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-server text-white text-xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-3">Microservices Architecture</h4>
+                        <p class="text-gray-400">Scalable and reliable system architecture ensuring 99.9% uptime and seamless performance.</p>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-6 rounded-xl">
+                        <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-bolt text-white text-xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-3">Real-time Communication</h4>
+                        <p class="text-gray-400">WebSockets and Twilio integration for instant notifications via SMS and WhatsApp.</p>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-6 rounded-xl">
+                        <div class="w-12 h-12 bg-success rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-mobile-alt text-white text-xl"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold mb-3">Modern Tech Stack</h4>
+                        <p class="text-gray-400">React Native, Node.js, Python, and MongoDB powering a fast, responsive platform.</p>
+                    </div>
+                </div>
+                
+                <!-- Tech Stack Icons -->
+                <div class="flex flex-wrap justify-center items-center gap-8 pt-8 border-t border-gray-800">
+                    <div class="text-center opacity-70 hover:opacity-100 transition-opacity" data-mock="true">
+                        <i class="fab fa-react text-3xl text-blue-400 mb-2"></i>
+                        <div class="text-sm">React Native</div>
+                    </div>
+                    <div class="text-center opacity-70 hover:opacity-100 transition-opacity" data-mock="true">
+                        <i class="fab fa-node-js text-3xl text-green-400 mb-2"></i>
+                        <div class="text-sm">Node.js</div>
+                    </div>
+                    <div class="text-center opacity-70 hover:opacity-100 transition-opacity" data-mock="true">
+                        <i class="fab fa-python text-3xl text-yellow-400 mb-2"></i>
+                        <div class="text-sm">Python</div>
+                    </div>
+                    <div class="text-center opacity-70 hover:opacity-100 transition-opacity" data-mock="true">
+                        <i class="fas fa-leaf text-3xl text-green-500 mb-2"></i>
+                        <div class="text-sm">MongoDB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Technology -->
+
+    <!-- @COMPONENT: About [team and mission] -->
+    <section id="about" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-6">About Find My Clinic</h3>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Our mission is to create a more efficient, accessible, and organized local healthcare network 
+                        for the entire community through innovative technology solutions.
+                    </p>
+                </div>
+
+                <!-- Team Section -->
+                <div class="mb-16">
+                    <h4 class="text-2xl font-bold text-gray-900 text-center mb-10">Meet Our Team</h4>
+                    <div class="grid md:grid-cols-4 gap-8">
+                        <div class="text-center" data-mock="true">
+                            <!-- Professional headshot of team member -->
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" 
+                                 alt="Professional headshot of Yashodhan Rajapkar" 
+                                 class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                            <h5 class="font-semibold text-gray-900" data-bind="team.yashodhan.name">Yashodhan Rajapkar</h5>
+                            <p class="text-sm text-gray-600" data-bind="team.yashodhan.role">Co-Founder & Lead Developer</p>
+                        </div>
+                        
+                        <div class="text-center" data-mock="true">
+                            <!-- Professional headshot of team member -->
+                            <img src="https://pixabay.com/get/g0d83a73fbb3c1b0764762d9f5cb345bd0438108c013ea859619f631e055ccdb608bbbc0537c10cc1873aad380d8be108e29d6c329be8324ad76abb91dbb0c8f2_1280.jpg" 
+                                 alt="Professional headshot of Madhura Patil" 
+                                 class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                            <h5 class="font-semibold text-gray-900" data-bind="team.madhura.name">Madhura Patil</h5>
+                            <p class="text-sm text-gray-600" data-bind="team.madhura.role">Co-Founder & UX Designer</p>
+                        </div>
+                        
+                        <div class="text-center" data-mock="true">
+                            <!-- Professional headshot of team member -->
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" 
+                                 alt="Professional headshot of Kaivalya Gharat" 
+                                 class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                            <h5 class="font-semibold text-gray-900" data-bind="team.kaivalya.name">Kaivalya Gharat</h5>
+                            <p class="text-sm text-gray-600" data-bind="team.kaivalya.role">Co-Founder & Backend Engineer</p>
+                        </div>
+                        
+                        <div class="text-center" data-mock="true">
+                            <!-- Professional headshot of team member -->
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=300" 
+                                 alt="Professional headshot of Swarali Mahishi" 
+                                 class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                            <h5 class="font-semibold text-gray-900" data-bind="team.swarali.name">Swarali Mahishi</h5>
+                            <p class="text-sm text-gray-600" data-bind="team.swarali.role">Co-Founder & Product Manager</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mission & Vision -->
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="bg-primary/5 p-8 rounded-xl">
+                        <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-6">
+                            <i class="fas fa-bullseye text-white text-xl"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-4">Our Mission</h4>
+                        <p class="text-gray-600">
+                            To eliminate the frustration of uncertain wait times in healthcare by providing 
+                            real-time, accessible technology that connects patients with clinics efficiently 
+                            and compassionately.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-secondary/5 p-8 rounded-xl">
+                        <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-6">
+                            <i class="fas fa-eye text-white text-xl"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-4">Our Vision</h4>
+                        <p class="text-gray-600">
+                            To create a comprehensive healthcare ecosystem where every clinic visit is 
+                            predictable, every patient is informed, and healthcare providers can focus 
+                            on what they do best—caring for people.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: About -->
+
+    <!-- @COMPONENT: CTA [final call to action] -->
+    <section class="py-20 bg-gradient-to-r from-primary to-secondary text-white">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-4xl mx-auto">
+                <h3 class="text-4xl font-bold mb-6">Ready to Transform Healthcare Visits?</h3>
+                <p class="text-xl mb-10 opacity-90">
+                    Join thousands of patients and hundreds of clinics already using Find My Clinic 
+                    to make healthcare more accessible and efficient.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                    <button class="bg-white text-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors" data-event="click:handlePatientSignup">
+                        <i class="fas fa-user mr-2"></i>
+                        Get Started as Patient
+                    </button>
+                    <button class="bg-accent text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-orange-600 transition-colors border-2 border-accent" data-event="click:handleClinicSignup">
+                        <i class="fas fa-hospital mr-2"></i>
+                        Register Your Clinic
+                    </button>
+                </div>
+                
+                <div class="mt-8 text-sm opacity-75">
+                    <p>Have questions? <a href="mailto:contact@findmyclinic.com" class="underline hover:no-underline">Contact our team</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: CTA -->
+
+    <!-- @COMPONENT: Footer [contact and links] -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- Brand -->
+                    <div class="md:col-span-2">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-white text-sm"></i>
+                                <i class="fas fa-user-md text-white text-xs -ml-1 -mt-1"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold">Find My Clinic</h4>
+                                <p class="text-sm text-gray-400">In need of care? We'll get you there.</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 mb-4">
+                            Making healthcare visits predictable and stress-free through innovative 
+                            queue management technology.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors" data-mock="true">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors" data-mock="true">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors" data-mock="true">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Links -->
+                    <div>
+                        <h5 class="font-semibold mb-4">Quick Links</h5>
+                        <ul class="space-y-2 text-gray-400">
+                            <li><a href="#home" class="hover:text-white transition-colors">Home</a></li>
+                            <li><a href="#patients" class="hover:text-white transition-colors">For Patients</a></li>
+                            <li><a href="#clinics" class="hover:text-white transition-colors">For Clinics</a></li>
+                            <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Contact -->
+                    <div>
+                        <h5 class="font-semibold mb-4">Contact</h5>
+                        <ul class="space-y-2 text-gray-400">
+                            <li class="flex items-center">
+                                <i class="fas fa-envelope w-4 mr-2"></i>
+                                <a href="mailto:contact@findmyclinic.com" class="hover:text-white transition-colors" data-mock="true">contact@findmyclinic.com</a>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-phone w-4 mr-2"></i>
+                                <span data-mock="true">+1 (555) 123-4567</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                    <p>&copy; 2024 Find My Clinic. All rights reserved. Built with ❤️ for better healthcare.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        
+        (function() {
+            // Tab switching for How It Works section
+            const patientTab = document.getElementById('patient-tab');
+            const clinicTab = document.getElementById('clinic-tab');
+            const patientJourney = document.getElementById('patient-journey');
+            const clinicJourney = document.getElementById('clinic-journey');
+
+            if (patientTab && clinicTab) {
+                patientTab.addEventListener('click', function() {
+                    // Switch to patient view
+                    patientTab.classList.add('bg-primary', 'text-white');
+                    patientTab.classList.remove('text-gray-700');
+                    clinicTab.classList.remove('bg-primary', 'text-white');
+                    clinicTab.classList.add('text-gray-700');
+                    
+                    patientJourney.classList.remove('hidden');
+                    clinicJourney.classList.add('hidden');
+                });
+
+                clinicTab.addEventListener('click', function() {
+                    // Switch to clinic view
+                    clinicTab.classList.add('bg-primary', 'text-white');
+                    clinicTab.classList.remove('text-gray-700');
+                    patientTab.classList.remove('bg-primary', 'text-white');
+                    patientTab.classList.add('text-gray-700');
+                    
+                    clinicJourney.classList.remove('hidden');
+                    patientJourney.classList.add('hidden');
+                });
+            }
+
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    // TODO: Implement mobile menu toggle
+                    console.log('Mobile menu clicked');
+                });
+            }
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Mock interaction handlers
+            document.querySelectorAll('[data-event]').forEach(element => {
+                element.addEventListener('click', function() {
+                    const eventType = this.getAttribute('data-event');
+                    console.log(`Event triggered: ${eventType}`);
+                    // TODO: Implement actual event handlers for each interaction
+                });
+            });
+        })();
+    </script>
+
+</body>
+<!-- @END_COMPONENT: App -->
+</html>

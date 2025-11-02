@@ -1,0 +1,1 @@
+- [ ] Remove text-shadow from body in client/src/index.css
