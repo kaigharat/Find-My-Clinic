@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Mail, Chrome } from "lucide-react";
 
 export default function Auth() {
+  const { t } = useTranslation();
   const { user, signIn, signUp, signInWithGoogle } = useAuth();
   const [, setLocation] = useLocation();
   const [loading, setLoading] = useState(false);
@@ -56,7 +58,7 @@ export default function Auth() {
     const confirmPassword = formData.get('confirmPassword') as string;
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('auth.passwordsDoNotMatch'));
       setLoading(false);
       return;
     }
@@ -67,7 +69,7 @@ export default function Auth() {
       setError(error.message);
     } else {
       if (data?.user && !data.user.email_confirmed_at) {
-        setError('Check your email for the confirmation link!');
+        setError(t('auth.checkEmailConfirmation'));
       } else {
         setLocation('/home');
       }
@@ -79,9 +81,9 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/5 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome to Find My Clinic</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('auth.title')}</CardTitle>
           <CardDescription>
-            Sign in to your account or create a new one
+            {t('auth.subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -89,7 +91,7 @@ export default function Auth() {
           {!authMethod && (
             <div className="space-y-6 mb-6">
               <div className="space-y-3">
-                <Label className="text-base font-semibold">Choose how to sign in:</Label>
+                <Label className="text-base font-semibold">{t('auth.chooseMethod')}</Label>
                 <Button
                   onClick={() => setAuthMethod('google')}
                   variant="outline"
@@ -97,7 +99,7 @@ export default function Auth() {
                   disabled={loading}
                 >
                   <Chrome className="mr-2 h-5 w-5" />
-                  Continue with Google
+                  {t('auth.continueWithGoogle')}
                 </Button>
 
                 <Button
@@ -107,7 +109,7 @@ export default function Auth() {
                   disabled={loading}
                 >
                   <Mail className="mr-2 h-5 w-5" />
-                  Continue with Email
+                  {t('auth.continueWithEmail')}
                 </Button>
               </div>
             </div>
@@ -117,8 +119,8 @@ export default function Auth() {
           {authMethod === 'google' && (
             <div className="space-y-4">
               <div className="text-center">
-                <h3 className="text-lg font-semibold">Sign in as Patient</h3>
-                <p className="text-sm text-muted-foreground">Using Google account</p>
+                <h3 className="text-lg font-semibold">{t('auth.signInAsPatient')}</h3>
+                <p className="text-sm text-muted-foreground">{t('auth.usingGoogle')}</p>
               </div>
               <Button
                 onClick={async () => {
@@ -137,14 +139,14 @@ export default function Auth() {
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 <Chrome className="mr-2 h-5 w-5" />
-                Continue with Google
+                {t('auth.continueWithGoogle')}
               </Button>
               <Button
                 onClick={() => setAuthMethod(null)}
                 variant="ghost"
                 className="w-full"
               >
-                ← Back to options
+                {t('auth.backToOptions')}
               </Button>
             </div>
           )}
@@ -159,36 +161,36 @@ export default function Auth() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-background px-2 text-muted-foreground">
-                    Continue with email as Patient
+                    {t('auth.continueWithEmailAsPatient')}
                   </span>
                 </div>
               </div>
 
               <Tabs defaultValue="signin" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="signin">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                  <TabsTrigger value="signin">{t('auth.signIn')}</TabsTrigger>
+                  <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="signin">
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signin-email">Email</Label>
+                      <Label htmlFor="signin-email">{t('auth.email')}</Label>
                       <Input
                         id="signin-email"
                         name="email"
                         type="email"
-                        placeholder="Enter your email"
+                        placeholder={t('auth.enterEmail')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signin-password">Password</Label>
+                      <Label htmlFor="signin-password">{t('auth.password')}</Label>
                       <Input
                         id="signin-password"
                         name="password"
                         type="password"
-                        placeholder="Enter your password"
+                        placeholder={t('auth.enterPassword')}
                         required
                       />
                     </div>
@@ -199,7 +201,7 @@ export default function Auth() {
                     )}
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Sign In
+                      {t('auth.signIn')}
                     </Button>
                   </form>
                 </TabsContent>
@@ -207,42 +209,42 @@ export default function Auth() {
                 <TabsContent value="signup">
                   <form onSubmit={handleSignUp} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="signup-name">Name</Label>
+                      <Label htmlFor="signup-name">{t('auth.name')}</Label>
                       <Input
                         id="signup-name"
                         name="name"
                         type="text"
-                        placeholder="Enter your name"
+                        placeholder={t('auth.enterName')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
+                      <Label htmlFor="signup-email">{t('auth.email')}</Label>
                       <Input
                         id="signup-email"
                         name="email"
                         type="email"
-                        placeholder="Enter your email"
+                        placeholder={t('auth.enterEmail')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-password">Password</Label>
+                      <Label htmlFor="signup-password">{t('auth.password')}</Label>
                       <Input
                         id="signup-password"
                         name="password"
                         type="password"
-                        placeholder="Create a password"
+                        placeholder={t('auth.createPassword')}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="signup-confirm-password">Confirm Password</Label>
+                      <Label htmlFor="signup-confirm-password">{t('auth.confirmPassword')}</Label>
                       <Input
                         id="signup-confirm-password"
                         name="confirmPassword"
                         type="password"
-                        placeholder="Confirm your password"
+                        placeholder={t('auth.confirmYourPassword')}
                         required
                       />
                     </div>
@@ -253,7 +255,7 @@ export default function Auth() {
                     )}
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      Sign Up as Patient
+                      {t('auth.signUpAsPatient')}
                     </Button>
                   </form>
                 </TabsContent>
@@ -264,7 +266,7 @@ export default function Auth() {
                 variant="ghost"
                 className="w-full"
               >
-                ← Back to options
+                {t('auth.backToOptions')}
               </Button>
             </>
           )}

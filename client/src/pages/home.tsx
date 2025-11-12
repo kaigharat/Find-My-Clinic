@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import {
   Search,
   Hospital,
@@ -50,6 +51,7 @@ import swaraPhoto from "@/images/swara.jpeg";
 import img1 from "@/images/pic 1.jpeg";
 import phoneImg from "@/images/phone.png";
 import HowItWorks from "@/components/sections/how-it-works";
+import OtherProducts from "@/components/sections/other-products";
 
 // Animation variants
 const fadeInUp = {
@@ -88,6 +90,7 @@ function useScrollAnimation() {
 }
 
 export default function Home() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { ref: heroRef, controls: heroControls } = useScrollAnimation();
   const { ref: problemRef, controls: problemControls } = useScrollAnimation();
@@ -160,17 +163,16 @@ export default function Home() {
                 variants={fadeInUp}
                 className="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-tight"
               >
-                Stop Waiting,<br />
+                {t('hero.title').split(',')[0]},<br />
                 <span className="bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">
-                  Start Healing
+                  {t('hero.title').split(',')[1]}
                 </span>
               </motion.h1>
               <motion.p
                 variants={fadeInUp}
                 className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed"
               >
-                Find nearby clinics, view real-time wait times, and join queues digitally.
-                Make healthcare visits predictable and stress-free.
+                {t('hero.subtitle')}
               </motion.p>
 
               <motion.div
@@ -186,7 +188,7 @@ export default function Home() {
                           className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8 py-4 rounded-full font-semibold hover:scale-105"
                         >
                           <User className="h-5 w-5 mr-2" />
-                          Go to Dashboard
+                          {t('hero.goToDashboard')}
                         </Button>
                       </Link>
                     </motion.div>
@@ -199,7 +201,7 @@ export default function Home() {
                           //className="border-2 border-white/30 text-white hover:bg-white hover:text-slate-900 text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg"
                         >
                           <Search className="h-5 w-5 mr-2" />
-                          Find a Clinic Now
+                          {t('hero.findClinicNow')}
                         </Button>
                       </Link>
                     </motion.div>
@@ -212,7 +214,7 @@ export default function Home() {
                           //className="border-2 border-white/30 text-white hover:bg-white hover:text-slate-900 text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg"
                         >
                           <Search className="h-5 w-5 mr-2" />
-                          Analyze Symptoms
+                          {t('hero.analyzeSymptoms')}
                         </Button>
                       </Link>
                     </motion.div>
@@ -226,7 +228,7 @@ export default function Home() {
                           className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-8 py-4 rounded-full font-semibold hover:scale-105"
                         >
                           <LogIn className="h-5 w-5 mr-2" />
-                          Login / Sign Up
+                          {t('hero.loginSignup')}
                         </Button>
                       </Link>
                     </motion.div>
@@ -238,7 +240,7 @@ export default function Home() {
                           className="border-2 border-slate-300 text-slate-900 hover:bg-slate-900 hover:text-white text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg"
                         >
                           <Search className="h-5 w-5 mr-2" />
-                          For Clinics
+                          {t('hero.forClinics')}
                         </Button>
                       </Link>
                     </motion.div>
@@ -250,7 +252,7 @@ export default function Home() {
                           className="border-2 border-slate-300 text-slate-900 hover:bg-slate-900 hover:text-white text-lg px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg"
                         >
                           <Search className="h-5 w-5 mr-2" />
-                          About
+                          {t('hero.about')}
                         </Button>
                       </Link>
                     </motion.div>
@@ -269,19 +271,19 @@ export default function Home() {
                   <div className="text-2xl font-bold text-blue-600">
                     {stats?.clinicsConnected || 0}+
                   </div>
-                  <div className="text-sm text-slate-600">Clinics Connected</div>
+                  <div className="text-sm text-slate-600">{t('hero.clinicsConnected')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">
                     {stats?.avgTimeSaved || "0 min"}
                   </div>
-                  <div className="text-sm text-slate-600">Avg. Time Saved</div>
+                  <div className="text-sm text-slate-600">{t('hero.avgTimeSaved')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-slate-700">
                     {stats?.patientsServed || 0}+
                   </div>
-                  <div className="text-sm text-slate-600">Patients Served</div>
+                  <div className="text-sm text-slate-600">{t('hero.patientsServed')}</div>
                 </div>
               </div>
             </motion.div>
@@ -305,7 +307,7 @@ export default function Home() {
               className="text-center mb-16"
             >
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
-                The Problem with Current Clinic Visits
+                {t('problem.title')}
               </h2>
             </motion.div>
 
@@ -316,28 +318,28 @@ export default function Home() {
               {[
                 {
                   icon: Clock,
-                  title: "Wasted Time in Queues",
-                  description: "Hours spent waiting in crowded clinics with no idea when you'll be seen.",
+                  title: t('problem.wastedTime.title'),
+                  description: t('problem.wastedTime.description'),
                   color: "bg-red-100",
                   iconColor: "text-red-500",
                 },
                 {
                   icon: UserX,
-                  title: "Staff Burnout",
-                  description: "Healthcare workers overwhelmed by manual queue management and administrative chaos.",
+                  title: t('problem.staffBurnout.title'),
+                  description: t('problem.staffBurnout.description'),
                   color: "bg-orange-100",
                   iconColor: "text-orange-500",
                 },
                 {
                   icon: AlertTriangle,
-                  title: "Poor Patient Experience",
-                  description: "Unpredictable wait times leading to stress and frustration for patients seeking care.",
+                  title: t('problem.poorExperience.title'),
+                  description: t('problem.poorExperience.description'),
                   color: "bg-yellow-100",
                   iconColor: "text-yellow-600",
                 },
               ].map((problem, index) => (
                 <motion.div key={index} variants={scaleIn}>
-                  <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group min-h-[350px]">
+                  <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group h-[350px] flex flex-col">
                     <CardContent className="p-8 text-center">
                       <div className={`w-16 h-16 ${problem.color} rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300`}>
                         <problem.icon className={`${problem.iconColor} h-8 w-8`} />
@@ -368,11 +370,10 @@ export default function Home() {
               className="text-center mb-16"
             >
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                Our Smart Solution
+                {t('solution.title')}
               </h2>
               <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">
-                Find My Clinic bridges the information gap in local healthcare with real-time queue management
-                and intelligent wait time predictions.
+                {t('solution.subtitle')}
               </p>
             </motion.div>
 
@@ -392,31 +393,31 @@ export default function Home() {
                 {[
                   {
                     icon: MapPin,
-                    title: "Real-Time Clinic Discovery",
-                    description: "Find nearby clinics instantly with live wait times and availability status.",
+                    title: t('solution.realTimeDiscovery.title'),
+                    description: t('solution.realTimeDiscovery.description'),
                     color: "bg-teal-500",
                   },
                   {
                     icon: Smartphone,
-                    title: "Digital Queue Management",
-                    description: "Get your queue token remotely and receive notifications when it's your turn.",
+                    title: t('solution.digitalQueue.title'),
+                    description: t('solution.digitalQueue.description'),
                     color: "bg-blue-500",
                   },
                   {
                     icon: QrCode,
-                    title: "Personal QR Code Generator",
-                    description: "Generate a personal QR code to instantly share your details and speed up access.",
+                    title: t('solution.qrCode.title'),
+                    description: t('solution.qrCode.description'),
                     color: "bg-slate-600",
                   },
                 ].map((solution, index) => (
                   <motion.div key={index} variants={fadeInUp}>
-                    <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
-                      <CardContent className="p-6">
-                        <div className="flex items-start space-x-4">
+                    <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group h-[140px] flex flex-col">
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="flex items-start space-x-4 flex-grow">
                           <div className={`w-12 h-12 ${solution.color} rounded-xl flex items-center justify-center flex-shrink-0 mt-1 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                             <solution.icon className="text-white h-6 w-6" />
                           </div>
-                          <div>
+                          <div className="flex-grow">
                             <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{solution.title}</h3>
                             <p className="text-slate-600 leading-relaxed">{solution.description}</p>
                           </div>
@@ -448,8 +449,8 @@ export default function Home() {
               variants={fadeInUp}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Find Clinics Near You</h2>
-              <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">Real-time availability and wait times at your fingertips</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">{t('findClinics.title')}</h2>
+              <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">{t('findClinics.subtitle')}</p>
             </motion.div>
 
             <motion.div
@@ -502,8 +503,8 @@ export default function Home() {
               variants={fadeInUp}
               className="text-center mb-16"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">What Makes Us Different</h2>
-              <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">Smart, inclusive, and accessible healthcare technology</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">{t('features.title')}</h2>
+              <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">{t('features.subtitle')}</p>
             </motion.div>
 
             <motion.div
@@ -513,28 +514,28 @@ export default function Home() {
               {[
                 {
                   icon: "qrcode",
-                  title: "Personal QR Code Generator",
-                  description: "Generate a personal QR code to instantly share your details and speed up access.",
-                  badge: "Digital + Physical Access",
+                  title: t('features.qrCode.title'),
+                  description: t('features.qrCode.description'),
+                  badge: t('features.qrCode.badge'),
                   gradient: "from-teal-500 to-blue-500",
                 },
                 {
                   icon: "brain",
-                  title: "Smart Predictions",
-                  description: "AI-powered predictive intelligence analyzes historical data and current patterns to provide the most accurate wait time estimates.",
-                  badge: "95%+ Accuracy Rate",
+                  title: t('features.smartPredictions.title'),
+                  description: t('features.smartPredictions.description'),
+                  badge: t('features.smartPredictions.badge'),
                   gradient: "from-blue-500 to-teal-500",
                 },
                 {
                   icon: "message-square",
-                  title: "Lite Mode Available",
-                  description: "WhatsApp and SMS integration for clinics with limited tech infrastructure, making our platform accessible to every healthcare provider.",
-                  badge: "No App Required",
+                  title: t('features.liteMode.title'),
+                  description: t('features.liteMode.description'),
+                  badge: t('features.liteMode.badge'),
                   gradient: "from-slate-600 to-teal-500",
                 },
               ].map((feature, index) => (
                 <motion.div key={index} variants={scaleIn}>
-                  <Card className="bg-white border border-slate-200 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 group overflow-hidden min-h-[350px]">
+                  <Card className="bg-white border border-slate-200 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 group overflow-hidden h-[350px] flex flex-col">
                     <CardContent className="p-8">
                       <div className="flex items-center justify-between mb-6">
                         <div className={`w-14 h-14 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
@@ -571,8 +572,8 @@ export default function Home() {
               variants={fadeInUp}
               className="text-center mb-16"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Transform Your Clinic Operations</h2>
-              <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">Reduce administrative burden and improve patient satisfaction</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">{t('forClinics.title')}</h2>
+              <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">{t('forClinics.subtitle')}</p>
             </motion.div>
 
             <motion.div
@@ -591,31 +592,31 @@ export default function Home() {
                 {[
                   {
                     icon: TrendingUp,
-                    title: "Efficient Digital Management",
-                    description: "Simple admin panel or WhatsApp bot to manage queues, update wait times, and scan patient QR codes for instant check-in.",
+                    title: t('forClinics.efficientManagement.title'),
+                    description: t('forClinics.efficientManagement.description'),
                     color: "bg-teal-500",
                   },
                   {
                     icon: Users,
-                    title: "Reduced Staff Burnout",
-                    description: "Eliminate manual queue management stress and reduce administrative chaos with automated patient flow.",
+                    title: t('forClinics.reducedBurnout.title'),
+                    description: t('forClinics.reducedBurnout.description'),
                     color: "bg-green-500",
                   },
                   {
                     icon: Settings,
-                    title: "Better Resource Allocation",
-                    description: "Optimize staff scheduling and improve operational efficiency with predictive patient flow data.",
+                    title: t('forClinics.betterAllocation.title'),
+                    description: t('forClinics.betterAllocation.description'),
                     color: "bg-blue-500",
                   },
                 ].map((benefit, index) => (
                   <motion.div key={index} variants={fadeInUp}>
-                    <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
-                      <CardContent className="p-6">
-                        <div className="flex items-start space-x-4">
+                    <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group h-[120px] flex flex-col">
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div className="flex items-start space-x-4 flex-grow">
                           <div className={`w-12 h-12 ${benefit.color} rounded-xl flex items-center justify-center flex-shrink-0 mt-1 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                             <benefit.icon className="text-white h-6 w-6" />
                           </div>
-                          <div>
+                          <div className="flex-grow">
                             <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{benefit.title}</h3>
                             <p className="text-slate-600 leading-relaxed">{benefit.description}</p>
                           </div>
@@ -628,7 +629,7 @@ export default function Home() {
                 <motion.div variants={scaleIn} className="pt-6">
                   <Link href="/clinics">
                     <Button size="lg" className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-8 py-4 rounded-full font-semibold hover:scale-105">
-                      Request a Demo
+                      {t('forClinics.requestDemo')}
                     </Button>
                   </Link>
                 </motion.div>
@@ -655,9 +656,9 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-6xl mx-auto text-center">
             <motion.div variants={fadeInUp}>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Built on Robust Technology</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">{t('technology.title')}</h2>
               <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">
-                Enterprise-grade architecture designed for scalability, reliability, and seamless user experience
+                {t('technology.subtitle')}
               </p>
             </motion.div>
 
@@ -668,28 +669,28 @@ export default function Home() {
               {[
                 {
                   icon: Server,
-                  title: "Microservices Architecture",
-                  description: "Scalable and reliable system architecture ensuring 99.9% uptime and seamless performance.",
+                  title: t('technology.microservices.title'),
+                  description: t('technology.microservices.description'),
                 },
                 {
                   icon: Zap,
-                  title: "Real-Time Processing",
-                  description: "Lightning-fast data processing with sub-second response times for live queue updates.",
+                  title: t('technology.realTime.title'),
+                  description: t('technology.realTime.description'),
                 },
                 {
                   icon: Shield,
-                  title: "Enterprise Security",
-                  description: "Bank-grade security with end-to-end encryption and compliance with healthcare data standards.",
+                  title: t('technology.security.title'),
+                  description: t('technology.security.description'),
                 },
               ].map((tech, index) => (
                 <motion.div key={index} variants={scaleIn}>
-                  <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group">
-                    <CardContent className="p-8 text-center">
+                  <Card className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group h-[280px] flex flex-col">
+                    <CardContent className="p-8 text-center flex flex-col h-full">
                       <div className={`w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                         <tech.icon className="text-white h-8 w-8" />
                       </div>
                       <h3 className="text-xl font-semibold text-slate-900 mb-4 group-hover:text-blue-600 transition-colors">{tech.title}</h3>
-                      <p className="text-slate-600 leading-relaxed">{tech.description}</p>
+                      <p className="text-slate-600 leading-relaxed flex-grow">{tech.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -712,8 +713,8 @@ export default function Home() {
             variants={fadeInUp}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Our Team</h2>
-            <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">Meet the passionate team behind Find My Clinic</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">{t('team.title')}</h2>
+            <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed">{t('team.subtitle')}</p>
           </motion.div>
 
           <motion.div
@@ -722,27 +723,27 @@ export default function Home() {
           >
             {[
               {
-                name: "Yashodhan Rajapkar",
-                role: "Founder & Lead Developer",
+                name: t('team.yashodhan.name'),
+                role: t('team.yashodhan.role'),
                 image: yashodhanPhoto,
-                bio: "Innovative founder and lead developer with a passion for creating impactful technology solutions.",
+                bio: t('team.yashodhan.bio'),
               },
               {
-                name: "Kaivalya Gharat",
-                role: "Co-Founder & Developer",
+                name: t('team.kaivalya.name'),
+                role: t('team.kaivalya.role'),
                 image: kaiPhoto,
-                bio: "Creative co-founder and developer dedicated to building user-friendly applications that solve real-world problems.",
+                bio: t('team.kaivalya.bio'),
               },
               {
-                name: "Swarali Mahishi",
-                role: "Co-Founder & Developer",
+                name: t('team.swarali.name'),
+                role: t('team.swarali.role'),
                 image: swaraPhoto,
-                bio: "Dedicated co-founder and developer focused on developing accessible and inclusive technology for everyone.",
+                bio: t('team.swarali.bio'),
               },
             ].map((member, index) => (
               <motion.div key={index} variants={scaleIn}>
-                <Card className="bg-white border border-slate-200 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 group overflow-hidden">
-                  <CardContent className="p-0">
+                <Card className="bg-white border border-slate-200 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 group overflow-hidden h-[500px] flex flex-col">
+                  <CardContent className="p-0 flex flex-col h-full">
                     <div className="aspect-square overflow-hidden">
                       <img
                         src={member.image}
@@ -750,21 +751,21 @@ export default function Home() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     </div>
-                    <div className="p-6">
+                    <div className="p-6 flex flex-col flex-grow">
                       <h3 className="text-xl font-semibold text-slate-900 mb-1">{member.name}</h3>
                       <p className="text-blue-600 font-medium mb-3">{member.role}</p>
-                      <p className="text-slate-600 text-sm leading-relaxed mb-4">{member.bio}</p>
-                      <div className="flex gap-2 justify-center">
-                        {(member.name === "Yashodhan Rajapkar" || member.name === "Kaivalya Gharat" || member.name === "Swarali Mahishi") && (
+                      <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-grow">{member.bio}</p>
+                      <div className="flex gap-2 justify-center mt-auto">
+                        {(member.name === t('team.yashodhan.name') || member.name === t('team.kaivalya.name') || member.name === t('team.swarali.name')) && (
                           <Button
                             variant="outline"
                             size="sm"
                             className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
                             onClick={() => {
                               const urls = {
-                                "Yashodhan Rajapkar": "https://www.linkedin.com/in/yashodhan-rajapkar-807014284",
-                                "Kaivalya Gharat": "https://www.linkedin.com/in/kaivalya-gharat-296704202/",
-                                "Swarali Mahishi": "https://www.linkedin.com/in/swarali-a-mahishi-2759262a9/"
+                                [t('team.yashodhan.name')]: "https://www.linkedin.com/in/yashodhan-rajapkar-807014284",
+                                [t('team.kaivalya.name')]: "https://www.linkedin.com/in/kaivalya-gharat-296704202/",
+                                [t('team.swarali.name')]: "https://www.linkedin.com/in/swarali-a-mahishi-2759262a9/"
                               };
                               window.open(urls[member.name as keyof typeof urls], '_blank');
                             }}
@@ -773,16 +774,16 @@ export default function Home() {
                             LinkedIn
                           </Button>
                         )}
-                        {(member.name === "Yashodhan Rajapkar" || member.name === "Kaivalya Gharat" || member.name === "Swarali Mahishi") && (
+                        {(member.name === t('team.yashodhan.name') || member.name === t('team.kaivalya.name') || member.name === t('team.swarali.name')) && (
                           <Button
                             variant="outline"
                             size="sm"
                             className="text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
                             onClick={() => {
                               const githubUrls = {
-                                "Yashodhan Rajapkar": "https://github.com/yash9769",
-                                "Kaivalya Gharat": "https://github.com/kaigharat",
-                                "Swarali Mahishi": "https://github.com/swara2402"
+                                [t('team.yashodhan.name')]: "https://github.com/yash9769",
+                                [t('team.kaivalya.name')]: "https://github.com/kaigharat",
+                                [t('team.swarali.name')]: "https://github.com/swara2402"
                               };
                               window.open(githubUrls[member.name as keyof typeof githubUrls], '_blank');
                             }}
@@ -800,6 +801,9 @@ export default function Home() {
           </motion.div>
         </div>
       </motion.section>
+
+      {/* ===== OTHER PRODUCTS ===== */}
+      <OtherProducts />
 
       </div>
     </div>

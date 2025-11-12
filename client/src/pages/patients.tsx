@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Search, MapPin, Clock, Users, Navigation, User, Star, IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Clinic } from "@shared/schema";
 import { useDebounce } from "@/hooks/use-debounce";
 import { supabase } from "@/lib/supabase";
+import { getTranslatedName, getTranslatedAddress } from "@/lib/utils";
 import loco from "@/images/loco.jpg";
 
 
@@ -39,6 +41,7 @@ interface Doctor {
 }
 
 export default function Patients() {
+  const { t, i18n } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
@@ -133,7 +136,7 @@ export default function Patients() {
   });
 
   const { data: clinics = [], isLoading } = useQuery({
-    queryKey: ["clinics", debouncedSearchQuery, selectedArea, userLocation],
+    queryKey: ["clinics", debouncedSearchQuery, selectedArea, userLocation, i18n.language],
     queryFn: async () => {
       let query = supabase
         .from('clinics')
@@ -141,7 +144,20 @@ export default function Patients() {
         .eq('is_active', true);
 
       if (debouncedSearchQuery) {
-        query = query.or(`name.ilike.%${debouncedSearchQuery}%,address.ilike.%${debouncedSearchQuery}%`);
+        // Search in translated fields based on current language
+        const currentLang = i18n.language;
+        let searchFields = ['name', 'address'];
+
+        if (currentLang === 'hi') {
+          searchFields = ['name_hi', 'address_hi', 'name', 'address'];
+        } else if (currentLang === 'mr') {
+          searchFields = ['name_mr', 'address_mr', 'name', 'address'];
+        } else {
+          searchFields = ['name_en', 'address_en', 'name', 'address'];
+        }
+
+        const searchCondition = searchFields.map(field => `${field}.ilike.%${debouncedSearchQuery}%`).join(',');
+        query = query.or(searchCondition);
       }
 
       if (selectedArea) {
@@ -225,22 +241,22 @@ export default function Patients() {
       });
       localStorage.setItem('userTokens', JSON.stringify(userTokens));
 
-      // Set queue status for display
-      setUserQueueStatus({
-        position: 1,
-        clinicName: `${selectedClinicForDoctors?.name} - Dr. ${doctor.name}`,
-        estimatedWaitTime: token.estimated_wait_time
-      });
+                              // Set queue status for display
+                              setUserQueueStatus({
+                                position: 1,
+                                clinicName: `${getTranslatedName(selectedClinicForDoctors!, i18n)} - Dr. ${doctor.name}`,
+                                estimatedWaitTime: token.estimated_wait_time
+                              });
 
       setIsDoctorsDialogOpen(false);
     } catch (error) {
       console.error('Booking error:', error);
-      // Fallback to just setting status without database
-      setUserQueueStatus({
-        position: 1,
-        clinicName: `${selectedClinicForDoctors?.name} - Dr. ${doctor.name}`,
-        estimatedWaitTime: Math.max(5, selectedClinicForDoctors?.currentWaitTime ? Math.floor(selectedClinicForDoctors.currentWaitTime / 2) : 10)
-      });
+                              // Fallback to just setting status without database
+                              setUserQueueStatus({
+                                position: 1,
+                                clinicName: `${getTranslatedName(selectedClinicForDoctors!, i18n)} - Dr. ${doctor.name}`,
+                                estimatedWaitTime: Math.max(5, selectedClinicForDoctors?.currentWaitTime ? Math.floor(selectedClinicForDoctors.currentWaitTime / 2) : 10)
+                              });
       setIsDoctorsDialogOpen(false);
     }
   };
@@ -277,14 +293,13 @@ export default function Patients() {
             <h1
               className="text-4xl font-bold text-gray-900 mb-6"
             >
-              Find Clinics Near You
+              {t('patients.title')}
             </h1>
             <p
               className="text-xl text-gray-600 mb-8"
             >
-              Real-time availability and wait times at your fingertips
+              {t('patients.subtitle')}
             </p>
-
             {/* Queue Status */}
             {userQueueStatus && (
               <Card className="max-w-md mx-auto mb-6 bg-blue-50 border-blue-200">
@@ -292,13 +307,13 @@ export default function Patients() {
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <Users className="h-5 w-5 text-blue-600" />
-                      <span className="font-semibold text-blue-900">Queue Status</span>
+                      <span className="font-semibold text-blue-900">{t('patients.queueStatus.title')}</span>
                     </div>
                     <p className="text-blue-800 mb-2">
-                      You are #{userQueueStatus.position} in queue at {userQueueStatus.clinicName}
+                      {t('patients.queueStatus.position', { position: userQueueStatus.position, clinicName: userQueueStatus.clinicName })}
                     </p>
                     <p className="text-sm text-blue-600 mb-3">
-                      Estimated wait time: {userQueueStatus.estimatedWaitTime} minutes
+                      {t('patients.queueStatus.estimatedWait', { minutes: userQueueStatus.estimatedWaitTime })}
                     </p>
                     <Button
                       variant="outline"
@@ -306,7 +321,7 @@ export default function Patients() {
                       onClick={() => setUserQueueStatus(null)}
                       className="border-blue-300 text-blue-700 hover:bg-blue-100"
                     >
-                      Leave Queue
+                      {t('patients.queueStatus.leaveQueue')}
                     </Button>
                   </div>
                 </CardContent>
@@ -317,7 +332,7 @@ export default function Patients() {
             {locationLoading && (
               <Alert className="max-w-md mx-auto mb-4">
                 <Navigation className="h-4 w-4" />
-                <AlertDescription>Getting your location...</AlertDescription>
+                <AlertDescription>{t('patients.location.gettingLocation')}</AlertDescription>
               </Alert>
             )}
 
@@ -330,7 +345,7 @@ export default function Patients() {
                     className="p-0 h-auto ml-2 text-destructive underline"
                     onClick={requestLocation}
                   >
-                    Try again
+                    {t('patients.location.tryAgain')}
                   </Button>
                 </AlertDescription>
               </Alert>
@@ -340,7 +355,7 @@ export default function Patients() {
               <Alert className="max-w-md mx-auto mb-4">
                 <Navigation className="h-4 w-4" />
                 <AlertDescription>
-                  Location detected! Clinics sorted by distance from your location.
+                  {t('patients.location.locationDetected')}
                 </AlertDescription>
               </Alert>
             )}
@@ -351,7 +366,7 @@ export default function Patients() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   type="text"
-                  placeholder="Search clinics by name or area..."
+                  placeholder={t('patients.search.placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-4 py-3"
@@ -382,8 +397,8 @@ export default function Patients() {
           ) : clinics.length === 0 ? (
             <div className="text-center py-12">
               <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No clinics found</h3>
-              <p className="text-gray-600">Try adjusting your search or check back later.</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('patients.noClinics.title')}</h3>
+              <p className="text-gray-600">{t('patients.noClinics.description')}</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -398,18 +413,21 @@ export default function Patients() {
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <CardTitle className="text-lg font-semibold text-gray-900" data-testid={`clinic-name-${clinic.id}`}>
-                          {clinic.name}
+                          {getTranslatedName(clinic, i18n)}
                         </CardTitle>
                         <p className="text-sm text-gray-600 flex items-center mt-1">
                           <MapPin className="h-4 w-4 mr-1" />
-                          {clinic.address}
+                          {getTranslatedAddress(clinic, i18n)}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Lat: {clinic.latitude}, Lng: {clinic.longitude}
                         </p>
                         {clinic.distance !== undefined && (
                           <p className="text-sm text-blue-600 flex items-center mt-1">
                             <Navigation className="h-4 w-4 mr-1" />
                             {clinic.distance < 1
-                              ? `${Math.round(clinic.distance * 1000)}m away`
-                              : `${clinic.distance.toFixed(1)} km away`
+                              ? t('patients.distance.meters', { distance: Math.round(clinic.distance * 1000) })
+                              : t('patients.distance.kilometers', { distance: clinic.distance.toFixed(1) })
                             }
                           </p>
                         )}
@@ -427,85 +445,125 @@ export default function Patients() {
                             <Clock className="h-4 w-4 mr-1" />
                             <span data-testid={`clinic-wait-time-${clinic.id}`}>{clinic.currentWaitTime} min</span>
                           </div>
-                          <div className="text-xs text-gray-500">Wait Time</div>
+                          <div className="text-xs text-gray-500">{t('patients.clinicCard.waitTime')}</div>
                         </div>
                         <div className="text-center">
                           <div className="flex items-center text-lg font-bold text-secondary">
                             <Users className="h-4 w-4 mr-1" />
                             <span data-testid={`clinic-queue-size-${clinic.id}`}>{clinic.queueSize}</span>
                           </div>
-                          <div className="text-xs text-gray-500">In Queue</div>
+                          <div className="text-xs text-gray-500">{t('patients.clinicCard.inQueue')}</div>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Button
-                        className="w-full bg-accent hover:bg-blue-600 text-white"
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          try {
-                            // Create an anonymous patient record
-                            const { data: patient, error: patientError } = await supabase
-                              .from('patients')
-                              .insert([{
-                                name: 'Anonymous Patient',
-                                phone: '0000000000',
-                                email: null,
-                              }])
-                              .select()
-                              .single();
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 text-primary border-primary hover:bg-primary hover:text-white"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (navigator.geolocation) {
+                              navigator.geolocation.getCurrentPosition(
+                                (position) => {
+                                  const userLat = position.coords.latitude;
+                                  const userLng = position.coords.longitude;
+                                  const clinicLat = parseFloat(clinic.latitude);
+                                  const clinicLng = parseFloat(clinic.longitude);
 
-                            if (patientError) throw patientError;
+                                  // Open Google Maps with directions
+                                  const googleMapsUrl = `https://www.google.com/maps/dir/${userLat},${userLng}/${clinicLat},${clinicLng}`;
+                                  window.open(googleMapsUrl, '_blank');
+                                },
+                                (error) => {
+                                  console.error('Error getting user location:', error);
+                                  // Fallback: open Google Maps to clinic location only
+                                  const clinicLat = parseFloat(clinic.latitude);
+                                  const clinicLng = parseFloat(clinic.longitude);
+                                  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${clinicLat},${clinicLng}`;
+                                  window.open(googleMapsUrl, '_blank');
+                                }
+                              );
+                            } else {
+                              // Fallback: open Google Maps to clinic location only
+                              const clinicLat = parseFloat(clinic.latitude);
+                              const clinicLng = parseFloat(clinic.longitude);
+                              const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${clinicLat},${clinicLng}`;
+                              window.open(googleMapsUrl, '_blank');
+                            }
+                          }}
+                        >
+                          <Navigation className="h-4 w-4 mr-2" /> {t('patients.clinicCard.getDirections')}
+                        </Button>
+                        <Button
+                          className="flex-1 bg-accent hover:bg-blue-600 text-white"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                              // Create an anonymous patient record
+                              const { data: patient, error: patientError } = await supabase
+                                .from('patients')
+                                .insert([{
+                                  name: 'Anonymous Patient',
+                                  phone: '0000000000',
+                                  email: null,
+                                }])
+                                .select()
+                                .single();
 
-                            // Create a queue token for the patient
-                            const { data: token, error } = await supabase
-                              .from('queue_tokens')
-                              .insert([{
-                                clinic_id: clinic.id,
-                                patient_id: patient.id,
-                                token_number: Math.floor(Math.random() * 1000) + 1,
-                                status: 'waiting',
-                                estimated_wait_time: clinic.currentWaitTime || 15
-                              }])
-                              .select()
-                              .single();
+                              if (patientError) throw patientError;
 
-                            if (error) throw error;
+                              // Create a queue token for the patient
+                              const { data: token, error } = await supabase
+                                .from('queue_tokens')
+                                .insert([{
+                                  clinic_id: clinic.id,
+                                  patient_id: patient.id,
+                                  token_number: Math.floor(Math.random() * 1000) + 1,
+                                  status: 'waiting',
+                                  estimated_wait_time: clinic.currentWaitTime || 15
+                                }])
+                                .select()
+                                .single();
 
-                            // Store token in localStorage for dashboard access
-                            const userTokens = JSON.parse(localStorage.getItem('userTokens') || '[]');
-                            userTokens.push({
-                              tokenNumber: token.token_number,
-                              clinicId: clinic.id,
-                              doctorId: null, // General clinic queue, no specific doctor
-                              createdAt: token.created_at,
-                              bookingType: 'clinic_queue'
-                            });
-                            localStorage.setItem('userTokens', JSON.stringify(userTokens));
+                              if (error) throw error;
 
-                            // Set queue status for display
-                            setUserQueueStatus({
-                              position: (clinic.queueSize || 0) + 1,
-                              clinicName: clinic.name,
-                              estimatedWaitTime: token.estimated_wait_time
-                            });
-                          } catch (error) {
-                            console.error('Booking error:', error);
-                            // Fallback to just setting status without database
-                            setUserQueueStatus({
-                              position: (clinic.queueSize || 0) + 1,
-                              clinicName: clinic.name,
-                              estimatedWaitTime: clinic.currentWaitTime || 15
-                            });
-                          }
-                        }}
-                        disabled={clinic.status === "closed"}
-                        data-testid={`button-join-queue-${clinic.id}`}
-                      >
-                        Join Queue
-                      </Button>
-                      <p className="text-xs text-center text-gray-500">Click card to see available doctors</p>
+                              // Store token in localStorage for dashboard access
+                              const userTokens = JSON.parse(localStorage.getItem('userTokens') || '[]');
+                              userTokens.push({
+                                tokenNumber: token.token_number,
+                                clinicId: clinic.id,
+                                doctorId: null, // General clinic queue, no specific doctor
+                                createdAt: token.created_at,
+                                bookingType: 'clinic_queue'
+                              });
+                              localStorage.setItem('userTokens', JSON.stringify(userTokens));
+
+                              // Set queue status for display
+                              setUserQueueStatus({
+                                position: (clinic.queueSize || 0) + 1,
+                                clinicName: getTranslatedName(clinic, i18n),
+                                estimatedWaitTime: token.estimated_wait_time
+                              });
+                            } catch (error) {
+                              console.error('Booking error:', error);
+                              // Fallback to just setting status without database
+                              setUserQueueStatus({
+                                position: (clinic.queueSize || 0) + 1,
+                                clinicName: getTranslatedName(clinic, i18n),
+                                estimatedWaitTime: clinic.currentWaitTime || 15
+                              });
+                            }
+                          }}
+                          disabled={clinic.status === "closed"}
+                          data-testid={`button-join-queue-${clinic.id}`}
+                        >
+                          {t('patients.clinicCard.joinQueue')}
+                        </Button>
+                      </div>
+                      <p className="text-xs text-center text-gray-500">{t('patients.clinicCard.clickToSeeDoctors')}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -520,7 +578,7 @@ export default function Patients() {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Available Doctors at {selectedClinicForDoctors?.name}
+                  {t('patients.doctorsDialog.title', { clinicName: selectedClinicForDoctors ? getTranslatedName(selectedClinicForDoctors, i18n) : '' })}
                 </DialogTitle>
               </DialogHeader>
               {selectedClinicForDoctors && (
@@ -528,7 +586,7 @@ export default function Patients() {
                   {clinicDoctors.length === 0 ? (
                     <div className="text-center py-8">
                       <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600">No doctors available today at this clinic.</p>
+                      <p className="text-gray-600">{t('patients.doctorsDialog.noDoctors')}</p>
                     </div>
                   ) : (
                     <div className="grid gap-4">
@@ -548,11 +606,11 @@ export default function Patients() {
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <Clock className="h-4 w-4" />
-                                    <span>{doctor.experience_years} years exp.</span>
+                                    <span>{t('patients.doctorsDialog.yearsExp', { years: doctor.experience_years })}</span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <IndianRupee className="h-4 w-4" />
-                                    <span>{doctor.consultation_fee}</span>
+                                    <span>{t('patients.doctorsDialog.consultationFee', { fee: doctor.consultation_fee })}</span>
                                   </div>
                                 </div>
                                 {doctor.bio && (
@@ -563,8 +621,7 @@ export default function Patients() {
                                 onClick={() => handleDoctorQueueJoin(doctor)}
                                 className="ml-4 bg-primary hover:bg-primary/90"
                               >
-                                <Users className="h-4 w-4 mr-2" />
-                                Join Queue
+                                <Users className="h-4 w-4 mr-2" /> {t('patients.doctorsDialog.joinQueue')}
                               </Button>
                             </div>
                           </CardContent>
@@ -574,8 +631,7 @@ export default function Patients() {
                   )}
                 </div>
               )}
-              <Button onClick={() => setIsDoctorsDialogOpen(false)} className="w-full" variant="outline">
-                Close
+              <Button onClick={() => setIsDoctorsDialogOpen(false)} className="w-full" variant="outline">{t('patients.doctorsDialog.close')}
               </Button>
             </DialogContent>
           </Dialog>

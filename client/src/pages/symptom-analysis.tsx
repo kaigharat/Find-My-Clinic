@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, AlertTriangle, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -12,6 +13,7 @@ import { analyzeSymptomsWithGemini } from "@/lib/gemini";
 import AI from "@/images/AI.jpg";
 
 export default function SymptomAnalysis() {
+  const { t } = useTranslation();
   const [, navigate] = useLocation();
   const [currentStep, setCurrentStep] = useState<"input" | "analyzing" | "results">("input");
   const [symptomData, setSymptomData] = useState<Symptom | null>(null);
@@ -223,15 +225,15 @@ export default function SymptomAnalysis() {
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
+            {t('symptomAnalysis.backToHome')}
           </Button>
 
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Symptom Analysis & Doctor Recommendations
+              {t('symptomAnalysis.title')}
             </h1>
             <p className="text-gray-600">
-              Describe your symptoms and get personalized healthcare recommendations
+              {t('symptomAnalysis.subtitle')}
             </p>
           </div>
         </div>
@@ -250,9 +252,7 @@ export default function SymptomAnalysis() {
                 <Alert>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
-                    This tool provides general recommendations based on your symptoms.
-                    It is not a substitute for professional medical advice, diagnosis, or treatment.
-                    Always consult with a qualified healthcare provider for medical concerns.
+                    {t('symptomAnalysis.disclaimer.description')}
                   </AlertDescription>
                 </Alert>
               </div>
@@ -265,10 +265,10 @@ export default function SymptomAnalysis() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Analyzing Your Symptoms
+                {t('symptomAnalysis.analyzing.title')}
               </h2>
               <p className="text-gray-600">
-                Please wait while we process your information and find the best healthcare recommendations...
+                {t('symptomAnalysis.analyzing.subtitle')}
               </p>
             </div>
           )}
@@ -279,25 +279,25 @@ export default function SymptomAnalysis() {
               <Alert className="border-green-200 bg-green-50">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">
-                  Analysis complete! Here are our recommendations based on your symptoms.
+                  {t('symptomAnalysis.results.successMessage')}
                 </AlertDescription>
               </Alert>
 
               {/* Symptom Summary */}
               <div className="bg-white rounded-lg p-6 shadow-sm border">
-                <h3 className="text-lg font-semibold mb-4">Your Symptoms</h3>
+                <h3 className="text-lg font-semibold mb-4">{t('symptomAnalysis.results.yourSymptoms')}</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Description</p>
+                    <p className="text-sm text-gray-600">{t('symptomAnalysis.results.description')}</p>
                     <p className="font-medium">{symptomData?.description}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Severity</p>
+                    <p className="text-sm text-gray-600">{t('symptomAnalysis.results.severity')}</p>
                     <p className="font-medium capitalize">{symptomData?.severity}</p>
                   </div>
                   {symptomData?.duration && (
                     <div>
-                      <p className="text-sm text-gray-600">Duration</p>
+                      <p className="text-sm text-gray-600">{t('symptomAnalysis.results.duration')}</p>
                       <p className="font-medium">{symptomData.duration}</p>
                     </div>
                   )}
@@ -307,21 +307,21 @@ export default function SymptomAnalysis() {
               {/* Gemini Analysis Results */}
               <div className="bg-green-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-green-900 mb-2">
-                  AI Analysis Results
+                  {t('symptomAnalysis.results.aiAnalysis')}
                 </h3>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <p className="text-green-800"><strong>Analysis:</strong> {analysisData.analysisResult}</p>
-                    <p className="text-green-800"><strong>Confidence:</strong> {analysisData.confidence}%</p>
-                    <p className="text-green-800"><strong>Urgency:</strong> {analysisData.urgency}</p>
+                    <p className="text-green-800"><strong>{t('symptomAnalysis.results.analysis')}:</strong> {analysisData.analysisResult}</p>
+                    <p className="text-green-800"><strong>{t('symptomAnalysis.results.confidence')}:</strong> {analysisData.confidence}%</p>
+                    <p className="text-green-800"><strong>{t('symptomAnalysis.results.urgency')}:</strong> {analysisData.urgency}</p>
                     {analysisData.recommended_specialty && (
-                      <p className="text-green-800"><strong>Recommended Specialty:</strong> {analysisData.recommended_specialty}</p>
+                      <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendedSpecialty')}:</strong> {analysisData.recommended_specialty}</p>
                     )}
                     {analysisData.recommendations && (
-                      <p className="text-green-800"><strong>Recommendations:</strong> {analysisData.recommendations}</p>
+                      <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendations')}:</strong> {analysisData.recommendations}</p>
                     )}
                     {analysisData.possibleConditions && analysisData.possibleConditions.length > 0 && (
-                      <p className="text-green-800"><strong>Possible Conditions:</strong> {analysisData.possibleConditions.join(', ')}</p>
+                      <p className="text-green-800"><strong>{t('symptomAnalysis.results.possibleConditions')}:</strong> {analysisData.possibleConditions.join(', ')}</p>
                     )}
                   </div>
 
@@ -329,7 +329,7 @@ export default function SymptomAnalysis() {
                   {rawGeminiResponse && (
                     <div className="border-t border-green-200 pt-4">
                       <h4 className="text-md font-semibold text-green-900 mb-2">
-                        Raw Gemini API Response
+                        {t('symptomAnalysis.results.rawResponse')}
                       </h4>
                       <div className="space-y-2">
                         {(() => {
@@ -337,16 +337,16 @@ export default function SymptomAnalysis() {
                             const parsed = JSON.parse(rawGeminiResponse);
                             return (
                               <>
-                                <p className="text-green-800"><strong>Analysis:</strong> {parsed.analysis}</p>
-                                  <p className="text-green-800"><strong>Confidence:</strong> {parsed.confidence}</p>
-                                  <p className="text-green-800"><strong>Urgency:</strong> {parsed.urgency}</p>
-                                  <p className="text-green-800"><strong>Recommended Specialty:</strong> {parsed.recommendedSpecialty}</p>
-                                  <p className="text-green-800"><strong>Recommendations:</strong> {parsed.recommendations}</p>
-                                  <p className="text-green-800"><strong>Possible Conditions:</strong> {Array.isArray(parsed.possibleConditions) ? parsed.possibleConditions.join(', ') : parsed.possibleConditions}</p>
+                                <p className="text-green-800"><strong>{t('symptomAnalysis.results.analysis')}:</strong> {parsed.analysis}</p>
+                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.confidence')}:</strong> {parsed.confidence}</p>
+                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.urgency')}:</strong> {parsed.urgency}</p>
+                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendedSpecialty')}:</strong> {parsed.recommendedSpecialty}</p>
+                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendations')}:</strong> {parsed.recommendations}</p>
+                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.possibleConditions')}:</strong> {Array.isArray(parsed.possibleConditions) ? parsed.possibleConditions.join(', ') : parsed.possibleConditions}</p>
                               </>
                             );
                           } catch (e) {
-                            return <p className="text-green-800">Unable to parse response</p>;
+                            return <p className="text-green-800">{t('symptomAnalysis.results.error.unableToParse')}</p>;
                           }
                         })()}
                       </div>
@@ -357,7 +357,7 @@ export default function SymptomAnalysis() {
 
               {/* Doctor Recommendation */}
               <div>
-                <h3 className="text-xl font-semibold mb-4">Recommended Healthcare Professional</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('symptomAnalysis.results.recommendedDoctor')}</h3>
                 <DoctorRecommendation
                   doctor={doctor}
                   clinic={clinic}
@@ -372,7 +372,7 @@ export default function SymptomAnalysis() {
               {analysisData.recommendations && (
                 <div className="bg-blue-50 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                    Additional Recommendations
+                    {t('symptomAnalysis.results.additionalRecommendations')}
                   </h3>
                   <p className="text-blue-800">{analysisData.recommendations}</p>
                 </div>
@@ -381,10 +381,10 @@ export default function SymptomAnalysis() {
               {/* Actions */}
               <div className="flex justify-center space-x-4">
                 <Button variant="outline" onClick={handleStartOver}>
-                  Analyze Different Symptoms
+                  {t('symptomAnalysis.actions.analyzeDifferent')}
                 </Button>
                 <Button onClick={() => navigate("/clinics")}>
-                  Browse All Clinics
+                  {t('symptomAnalysis.actions.browseClinics')}
                 </Button>
               </div>
             </div>
@@ -396,15 +396,14 @@ export default function SymptomAnalysis() {
               <Alert variant="destructive" className="max-w-md mx-auto">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  {submitSymptomMutation.error?.message ||
-                    "Sorry, we encountered an error analyzing your symptoms. This could be due to API connectivity issues or invalid input. Please try again or contact support if the problem persists."}
+                  {submitSymptomMutation.error?.message || t('symptomAnalysis.error.analysisError')}
                 </AlertDescription>
               </Alert>
               <Button
                 onClick={() => setCurrentStep("input")}
                 className="mt-4"
               >
-                Try Again
+                {t('symptomAnalysis.error.tryAgain')}
               </Button>
             </div>
           )}

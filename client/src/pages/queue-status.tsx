@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Search, Ticket, Clock, MapPin, User } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface QueueToken {
   id: string;
@@ -27,6 +28,7 @@ interface QueueToken {
 }
 
 export default function QueueStatus() {
+  const { t } = useTranslation();
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [tokenNumber, setTokenNumber] = useState("");
@@ -37,8 +39,8 @@ export default function QueueStatus() {
   const handleSearch = async () => {
     if (!tokenNumber.trim()) {
       toast({
-        title: "Token Required",
-        description: "Please enter your token number",
+        title: t("queueStatus.tokenRequired"),
+        description: t("queueStatus.enterTokenNumber"),
         variant: "destructive",
       });
       return;
@@ -80,15 +82,19 @@ export default function QueueStatus() {
           throw error;
         }
       } else {
-        setQueueToken(data);
+        setQueueToken({
+          ...data,
+          clinic: data.clinic[0],
+          doctor: data.doctor[0]
+        });
       }
 
       setSearched(true);
     } catch (error) {
       console.error('Error searching token:', error);
       toast({
-        title: "Search Failed",
-        description: "Unable to find token. Please try again.",
+        title: t("queueStatus.searchFailed"),
+        description: t("queueStatus.unableToFindToken"),
         variant: "destructive",
       });
     } finally {
@@ -117,15 +123,15 @@ export default function QueueStatus() {
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
+            {t("queueStatus.backToHome")}
           </Button>
 
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Check Queue Status
+              {t("queueStatus.title")}
             </h1>
             <p className="text-gray-600">
-              Enter your token number to check your position in the queue
+              {t("queueStatus.subtitle")}
             </p>
           </div>
         </div>
@@ -135,17 +141,17 @@ export default function QueueStatus() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" />
-              Find Your Token
+              {t("queueStatus.findToken")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="token">Token Number</Label>
+                <Label htmlFor="token">{t("queueStatus.tokenNumber")}</Label>
                 <Input
                   id="token"
                   type="number"
-                  placeholder="Enter your token number (e.g., 123)"
+                  placeholder={t("queueStatus.placeholder")}
                   value={tokenNumber}
                   onChange={(e) => setTokenNumber(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -156,7 +162,7 @@ export default function QueueStatus() {
                 disabled={loading}
                 className="w-full"
               >
-                {loading ? "Searching..." : "Check Status"}
+                {loading ? t("queueStatus.searching") : t("queueStatus.checkStatus")}
               </Button>
             </div>
           </CardContent>
@@ -168,7 +174,7 @@ export default function QueueStatus() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Ticket className="h-5 w-5" />
-                Token Status
+                {t("queueStatus.tokenStatus")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -199,7 +205,7 @@ export default function QueueStatus() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-gray-500" />
-                        <span className="font-medium">Clinic</span>
+                        <span className="font-medium">{t("queueStatus.clinic")}</span>
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{queueToken.clinic.name}</p>
@@ -211,7 +217,7 @@ export default function QueueStatus() {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-gray-500" />
-                        <span className="font-medium">Doctor</span>
+                        <span className="font-medium">{t("queueStatus.doctor")}</span>
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{queueToken.doctor.name}</p>

@@ -46,6 +46,10 @@ CREATE POLICY "Users can insert own profile" ON user_profiles
 CREATE POLICY "Users can update own profile" ON user_profiles
   FOR UPDATE USING (auth.uid() = user_id);
 
+-- Allow public access to view profiles (for QR code scanning)
+CREATE POLICY "Public can view profiles" ON user_profiles
+  FOR SELECT USING (true);
+
 -- For clinic users, we'll need to handle this differently
 -- For now, allow all authenticated users to view profiles (temporary solution)
 -- In production, you'd want to check user roles properly

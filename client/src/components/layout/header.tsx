@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "framer-motion";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import {
 
   Hospital,
@@ -41,6 +42,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import LanguageSwitcher from "@/components/ui/language-switcher";
 
 // Animation variants
 const fadeInUp = {
@@ -79,28 +81,30 @@ function useScrollAnimation() {
 }
 
 export default function Header() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
+
   const [location] = useLocation();
   const { signOut, userRole } = useAuth();
 
   const getNavigation = () => {
     if (userRole === 'patient') {
       return [
-        { name: "Home", href: "/" },
-        { name: "Find Clinics", href: "/patients" },
-        { name: "Symptom Analysis", href: "/symptom-analysis" },
-        { name: "My Profile", href: "/profile" },
+        { name: t('nav.home'), href: "/" },
+        { name: t('nav.findClinics'), href: "/patients" },
+        { name: t('nav.symptomAnalysis'), href: "/symptom-analysis" },
+        { name: t('nav.myProfile'), href: "/profile" },
         //{ name: "Dashboard", href: "/dashboard" },
-        { name: "About", href: "/about" },
+        { name: t('nav.about'), href: "/about" },
       ];
     } else {
       return [
-        { name: "Home", href: "/" },
-        { name: "For Clinics", href: "/clinics" },
+        { name: t('nav.home'), href: "/" },
+        { name: t('nav.forClinics'), href: "/clinics" },
         //{ name: "Symptom Analysis", href: "/symptom-analysis" },
-        { name: "About", href: "/about" },
+        { name: t('nav.about'), href: "/about" },
       ];
     }
   };
@@ -108,11 +112,11 @@ export default function Header() {
   const navigation = getNavigation();
 
   const emergencyServices = [
-    { name: "Ambulance", number: "108", description: "Emergency medical services" },
-    { name: "Police", number: "100", description: "Law enforcement emergency" },
-    { name: "Fire Brigade", number: "101", description: "Fire emergency services" },
-    { name: "Women Helpline", number: "1091", description: "Women's safety and support" },
-    { name: "Child Helpline", number: "1098", description: "Child protection services" },
+    { name: t('emergency.ambulance'), number: "108", description: t('emergency.ambulance') + " - " + t('emergency.description') },
+    { name: t('emergency.police'), number: "100", description: t('emergency.police') + " - " + t('emergency.description') },
+    { name: t('emergency.fire'), number: "101", description: t('emergency.fire') + " - " + t('emergency.description') },
+    { name: t('emergency.helpline'), number: "1091", description: t('emergency.helpline') + " - " + t('emergency.description') },
+    { name: t('emergency.childline'), number: "1098", description: t('emergency.childline') + " - " + t('emergency.description') },
   ];
 
   const handleEmergencyCall = (number: string) => {
@@ -124,29 +128,78 @@ export default function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-slate-200 shadow-lg"
+      className="sticky top-0 z-50 bg-white shadow-lg"
     >
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
+          <Link href="/" className="flex items-center space-x-3 group mr-8">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
               <MapPin className="text-white h-5 w-5" />
               <Stethoscope className="text-white h-3 w-3 absolute -top-0.5 -right-0.5" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+            <div className="text-center">
+              <h1 className="text-xl font-bold text-gray-900">
                 Find My Clinic
               </h1>
-              <p className="text-xs text-slate-600">In need of care? We'll get you there.</p>
+              <p className="text-xs text-gray-700">Find clinics near you</p>
             </div>
           </Link>
 
-
+          {/* Emergency Button - Desktop */}
+          <div className="hidden md:flex items-center mr-6">
+            <Dialog open={isEmergencyOpen} onOpenChange={setIsEmergencyOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 animate-pulse"
+                  data-testid="emergency-button"
+                >
+                  <Ambulance className="h-4 w-4 mr-2" />
+                  {t('emergency.title')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-red-600">
+                    <AlertTriangle className="h-5 w-5" />
+                    {t('emergency.title')}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    {t('emergency.description')}
+                  </p>
+                  <div className="grid gap-3">
+                    {emergencyServices.map((service) => (
+                      <div key={service.name} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{service.name}</h4>
+                          <p className="text-sm text-gray-600">{service.description}</p>
+                        </div>
+                        <Button
+                          onClick={() => handleEmergencyCall(service.number)}
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                          size="sm"
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          {service.number}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-center text-xs text-gray-500 mt-4">
+                    {t('emergency.available')}
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
 
           {/* Desktop Navigation */}
           <motion.div
-            className="hidden md:flex items-center space-x-8"
+            className="hidden md:flex items-center justify-center space-x-6 flex-1"
             variants={staggerContainer}
             initial="initial"
             animate="animate"
@@ -161,8 +214,8 @@ export default function Header() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 font-medium px-3 py-2 rounded-lg",
-                    location === item.href && "text-blue-600 font-semibold bg-blue-50"
+                    "text-gray-900 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 font-medium px-3 py-2 rounded-lg",
+                    location === item.href && "text-blue-600 font-semibold bg-blue-100"
                   )}
                   data-testid={`nav-${item.name.toLowerCase().replace(' ', '-')}`}
                 >
@@ -177,78 +230,28 @@ export default function Header() {
             {user ? (
               <>
                 <Link href="/dashboard">
-                  <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-2 rounded-full font-semibold">
-                    Go to Dashboard
+                  <Button className="bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-2 rounded-full font-semibold">
+                    {t('nav.goToDashboard')}
                   </Button>
                 </Link>
                 <Button
                   onClick={signOut}
                   variant="outline"
-                  className="border-slate-300 hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-all duration-300 px-4 py-2 rounded-full font-semibold"
+                  className="border-gray-300 text-gray-900 hover:bg-gray-100 hover:text-blue-600 transition-all duration-300 px-4 py-2 rounded-full font-semibold"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
-                  Logout
+                  {t('nav.logout')}
                 </Button>
               </>
             ) : (
               <Link href="/auth">
-                <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-2 rounded-full font-semibold">
-                  Login / Sign Up
+                <Button className="bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-2 rounded-full font-semibold">
+                  {t('nav.loginSignup')}
                 </Button>
               </Link>
             )}
 
-            {/* Emergency Button - Desktop */}
-            <div className="hidden md:flex items-center">
-              <Dialog open={isEmergencyOpen} onOpenChange={setIsEmergencyOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 animate-pulse"
-                    data-testid="emergency-button"
-                  >
-                    <Ambulance className="h-4 w-4 mr-2" />
-                    Emergency
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-red-600">
-                      <AlertTriangle className="h-5 w-5" />
-                      Emergency Services
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <p className="text-sm text-gray-600">
-                      In case of emergency, contact the appropriate service immediately.
-                    </p>
-                    <div className="grid gap-3">
-                      {emergencyServices.map((service) => (
-                        <div key={service.name} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div>
-                            <h4 className="font-semibold text-gray-900">{service.name}</h4>
-                            <p className="text-sm text-gray-600">{service.description}</p>
-                          </div>
-                          <Button
-                            onClick={() => handleEmergencyCall(service.number)}
-                            className="bg-red-600 hover:bg-red-700 text-white"
-                            size="sm"
-                          >
-                            <Phone className="h-4 w-4 mr-2" />
-                            {service.number}
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="text-center text-xs text-gray-500 mt-4">
-                      Emergency services are available 24/7
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-
+            <LanguageSwitcher />
           </div>
 
           {/* Mobile Menu Button */}
@@ -258,9 +261,9 @@ export default function Header() {
             data-testid="button-mobile-menu"
           >
             {isMenuOpen ? (
-              <X className="h-6 w-6 text-slate-700" />
+              <X className="h-6 w-6 text-gray-900" />
             ) : (
-              <Menu className="h-6 w-6 text-slate-700" />
+              <Menu className="h-6 w-6 text-gray-900" />
             )}
           </button>
         </div>
@@ -270,7 +273,7 @@ export default function Header() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="md:hidden mt-4 pb-4 border-t border-slate-200"
+            className="md:hidden mt-4 pb-4 border-t border-gray-300"
           >
             <div className="pt-4 space-y-3">
               {navigation.map((item) => (
@@ -278,7 +281,7 @@ export default function Header() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "block text-slate-700 hover:text-blue-600 transition-colors py-2",
+                    "block text-gray-900 hover:text-blue-600 transition-colors py-2",
                     location === item.href && "text-blue-600 font-medium"
                   )}
                   onClick={() => setIsMenuOpen(false)}
@@ -291,8 +294,8 @@ export default function Header() {
                 {user ? (
                   <>
                     <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                      <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full">
-                        Go to Dashboard
+                      <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 rounded-full">
+                        {t('nav.goToDashboard')}
                       </Button>
                     </Link>
                     <Button
@@ -301,20 +304,19 @@ export default function Header() {
                         setIsMenuOpen(false);
                       }}
                       variant="outline"
-                      className="w-full border-slate-300 hover:bg-slate-50 text-slate-700 hover:text-slate-900 rounded-full"
+                      className="w-full border-gray-300 text-gray-900 hover:bg-gray-100 hover:text-blue-600 rounded-full"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
-                      Logout
+                      {t('nav.logout')}
                     </Button>
                   </>
                 ) : (
                   <Link href="/auth" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full">
-                      Login / Sign Up
+                    <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 rounded-full">
+                      {t('nav.loginSignup')}
                     </Button>
                   </Link>
                 )}
-
               </div>
             </div>
           </motion.div>

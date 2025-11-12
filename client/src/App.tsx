@@ -42,6 +42,7 @@ function Router() {
       <Route path="/clinics" component={Clinics} />
       <Route path="/about" component={About} />
       <Route path="/queue-status" component={QueueStatus} />
+      <Route path="/patient/:id" component={PatientInfo} />
       {user ? (
         <>
           <Route path="/dashboard" component={UserDashboard} />

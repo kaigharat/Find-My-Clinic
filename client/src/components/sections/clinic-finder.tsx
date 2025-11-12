@@ -7,13 +7,15 @@ import ClinicCard from "@/components/ui/clinic-card";
 import type { Clinic } from "@shared/schema";
 import { useDebounce } from "@/hooks/use-debounce";
 import { supabase } from "@/lib/supabase";
+import { useTranslation } from "react-i18next";
 
 export default function ClinicFinder() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500); // Debounce input by 500ms
+  const { i18n } = useTranslation();
 
   const { data: clinics = [], isLoading } = useQuery({
-    queryKey: ["clinics", debouncedSearchQuery],
+    queryKey: ["clinics", debouncedSearchQuery, i18n.language],
     queryFn: async () => {
       let query = supabase
         .from('clinics')
@@ -31,7 +33,20 @@ export default function ClinicFinder() {
         .eq('is_active', true);
 
       if (debouncedSearchQuery) {
-        query = query.or(`name.ilike.%${debouncedSearchQuery}%,address.ilike.%${debouncedSearchQuery}%`);
+        // Search in translated fields based on current language
+        const currentLang = i18n.language;
+        let searchFields = ['name', 'address'];
+
+        if (currentLang === 'hi') {
+          searchFields = ['name_hi', 'address_hi', 'name', 'address'];
+        } else if (currentLang === 'mr') {
+          searchFields = ['name_mr', 'address_mr', 'name', 'address'];
+        } else {
+          searchFields = ['name_en', 'address_en', 'name', 'address'];
+        }
+
+        const searchCondition = searchFields.map(field => `${field}.ilike.%${debouncedSearchQuery}%`).join(',');
+        query = query.or(searchCondition);
       }
 
       const { data, error } = await query;

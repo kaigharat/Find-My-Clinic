@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,7 @@ interface ProfileData {
 }
 
 export default function Profile() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [loading, setLoading] = useState(false);
@@ -98,14 +100,36 @@ export default function Profile() {
         // Generate QR code if profile is complete
         const isComplete = data.full_name && data.date_of_birth && data.phone;
         if (isComplete) {
-          const patientInfoUrl = `${window.location.origin}/patient-info/${user.id}`;
-          setQrCodeUrl(patientInfoUrl);
+          // Format profile data as readable text for QR code
+          const formattedProfile = `
+${t('profile.qrCode.medicalProfile')}
+${t('profile.qrCode.name')}: ${data.full_name}
+${t('profile.qrCode.dob')}: ${data.date_of_birth}
+${t('profile.qrCode.gender')}: ${data.gender || t('profile.qrCode.notSpecified')}
+${t('profile.qrCode.phone')}: ${data.phone}
+${t('profile.qrCode.bloodType')}: ${data.blood_type || t('profile.qrCode.notSpecified')}
+
+${t('profile.qrCode.emergencyContact')}
+${t('profile.qrCode.name')}: ${data.emergency_contact || t('profile.qrCode.notSpecified')}
+${t('profile.qrCode.phone')}: ${data.emergency_phone || t('profile.qrCode.notSpecified')}
+
+${t('profile.qrCode.medicalInfo')}
+${t('profile.qrCode.allergies')}: ${data.allergies || t('profile.qrCode.none')}
+${t('profile.qrCode.conditions')}: ${data.medical_conditions || t('profile.qrCode.none')}
+${t('profile.qrCode.medications')}: ${data.medications || t('profile.qrCode.none')}
+
+${t('profile.qrCode.insurance')}
+${t('profile.qrCode.provider')}: ${data.insurance_provider || t('profile.qrCode.none')}
+${t('profile.qrCode.number')}: ${data.insurance_number || t('profile.qrCode.none')}
+          `.trim();
+
+          setQrCodeUrl(formattedProfile);
           setShowQRCode(true);
         }
       }
     } catch (err) {
       console.error('Error loading profile:', err);
-      setError('Failed to load profile data');
+      setError(t('profile.actions.loadError'));
     } finally {
       setLoading(false);
     }
@@ -176,14 +200,35 @@ export default function Profile() {
 
       if (error) throw error;
 
-      setSuccess('Profile saved successfully!');
-      // Generate QR code URL for patient info
-      const patientInfoUrl = `${window.location.origin}/patient-info/${user.id}`;
-      setQrCodeUrl(patientInfoUrl);
+      setSuccess(t('profile.actions.success'));
+      // Generate QR code with formatted profile text
+      const formattedProfile = `
+${t('profile.qrCode.medicalProfile')}
+${t('profile.qrCode.name')}: ${profileData.fullName}
+${t('profile.qrCode.dob')}: ${profileData.dateOfBirth}
+${t('profile.qrCode.gender')}: ${profileData.gender || t('profile.qrCode.notSpecified')}
+${t('profile.qrCode.phone')}: ${profileData.phone}
+${t('profile.qrCode.bloodType')}: ${profileData.bloodType || t('profile.qrCode.notSpecified')}
+
+${t('profile.qrCode.emergencyContact')}
+${t('profile.qrCode.name')}: ${profileData.emergencyContact || t('profile.qrCode.notSpecified')}
+${t('profile.qrCode.phone')}: ${profileData.emergencyPhone || t('profile.qrCode.notSpecified')}
+
+${t('profile.qrCode.medicalInfo')}
+${t('profile.qrCode.allergies')}: ${profileData.allergies || t('profile.qrCode.none')}
+${t('profile.qrCode.conditions')}: ${profileData.medicalConditions || t('profile.qrCode.none')}
+${t('profile.qrCode.medications')}: ${profileData.medications || t('profile.qrCode.none')}
+
+${t('profile.qrCode.insurance')}
+${t('profile.qrCode.provider')}: ${profileData.insuranceProvider || t('profile.qrCode.none')}
+${t('profile.qrCode.number')}: ${profileData.insuranceNumber || t('profile.qrCode.none')}
+      `.trim();
+
+      setQrCodeUrl(formattedProfile);
       setShowQRCode(true);
     } catch (err) {
       console.error('Error saving profile:', err);
-      setError('Failed to save profile. Please try again.');
+      setError(t('profile.actions.error'));
     } finally {
       setSaving(false);
     }
@@ -226,8 +271,8 @@ export default function Profile() {
       ></div>
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Your Medical Profile</h1>
-          <p className="text-gray-600">Help us provide you with the best healthcare experience</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('profile.title')}</h1>
+          <p className="text-gray-600">{t('profile.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSave} className="space-y-6">
@@ -236,26 +281,26 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                Personal Information
+                {t('profile.personalInfo.title')}
               </CardTitle>
               <CardDescription>
-                Basic information about yourself
+                {t('profile.personalInfo.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Label htmlFor="fullName">{t('profile.personalInfo.fullName')} *</Label>
                   <Input
                     id="fullName"
                     value={profileData.fullName}
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    placeholder="Enter your full name"
+                    placeholder={t('profile.personalInfo.enterFullName')}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                  <Label htmlFor="dateOfBirth">{t('profile.personalInfo.dateOfBirth')} *</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
@@ -267,34 +312,34 @@ export default function Profile() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="gender">Gender</Label>
+                  <Label htmlFor="gender">{t('profile.personalInfo.gender')}</Label>
                   <Select value={profileData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
+                      <SelectValue placeholder={t('profile.personalInfo.selectGender')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                      <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                      <SelectItem value="male">{t('profile.personalInfo.male')}</SelectItem>
+                      <SelectItem value="female">{t('profile.personalInfo.female')}</SelectItem>
+                      <SelectItem value="other">{t('profile.personalInfo.other')}</SelectItem>
+                      <SelectItem value="prefer-not-to-say">{t('profile.personalInfo.preferNotToSay')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="bloodType">Blood Type</Label>
+                  <Label htmlFor="bloodType">{t('profile.personalInfo.bloodType')}</Label>
                   <Select value={profileData.bloodType} onValueChange={(value) => handleInputChange('bloodType', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select blood type" />
+                      <SelectValue placeholder={t('profile.personalInfo.selectBloodType')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="A+">A+</SelectItem>
-                      <SelectItem value="A-">A-</SelectItem>
-                      <SelectItem value="B+">B+</SelectItem>
-                      <SelectItem value="B-">B-</SelectItem>
-                      <SelectItem value="AB+">AB+</SelectItem>
-                      <SelectItem value="AB-">AB-</SelectItem>
-                      <SelectItem value="O+">O+</SelectItem>
-                      <SelectItem value="O-">O-</SelectItem>
+                      <SelectItem value="A+">{t('profile.bloodTypes.A+')}</SelectItem>
+                      <SelectItem value="A-">{t('profile.bloodTypes.A-')}</SelectItem>
+                      <SelectItem value="B+">{t('profile.bloodTypes.B+')}</SelectItem>
+                      <SelectItem value="B-">{t('profile.bloodTypes.B-')}</SelectItem>
+                      <SelectItem value="AB+">{t('profile.bloodTypes.AB+')}</SelectItem>
+                      <SelectItem value="AB-">{t('profile.bloodTypes.AB-')}</SelectItem>
+                      <SelectItem value="O+">{t('profile.bloodTypes.O+')}</SelectItem>
+                      <SelectItem value="O-">{t('profile.bloodTypes.O-')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -307,42 +352,42 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Phone className="h-5 w-5" />
-                Contact Information
+                {t('profile.contactInfo.title')}
               </CardTitle>
               <CardDescription>
-                How to reach you in case of emergency
+                {t('profile.contactInfo.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
+                <Label htmlFor="phone">{t('profile.contactInfo.phone')} *</Label>
                 <Input
                   id="phone"
                   type="tel"
                   value={profileData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="+1234567890"
+                  placeholder={t('profile.contactInfo.enterPhone')}
                   required
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyContact">Emergency Contact Name</Label>
+                  <Label htmlFor="emergencyContact">{t('profile.contactInfo.emergencyContact')}</Label>
                   <Input
                     id="emergencyContact"
                     value={profileData.emergencyContact}
                     onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
-                    placeholder="Emergency contact name"
+                    placeholder={t('profile.contactInfo.enterEmergencyContact')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyPhone">Emergency Contact Phone</Label>
+                  <Label htmlFor="emergencyPhone">{t('profile.contactInfo.emergencyPhone')}</Label>
                   <Input
                     id="emergencyPhone"
                     type="tel"
                     value={profileData.emergencyPhone}
                     onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
-                    placeholder="+1234567890"
+                    placeholder={t('profile.contactInfo.enterEmergencyPhone')}
                   />
                 </div>
               </div>
@@ -354,40 +399,40 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Heart className="h-5 w-5" />
-                Medical Information
+                {t('profile.medicalInfo.title')}
               </CardTitle>
               <CardDescription>
-                Important medical details for your healthcare providers
+                {t('profile.medicalInfo.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="allergies">Allergies</Label>
+                <Label htmlFor="allergies">{t('profile.medicalInfo.allergies')}</Label>
                 <Textarea
                   id="allergies"
                   value={profileData.allergies}
                   onChange={(e) => handleInputChange('allergies', e.target.value)}
-                  placeholder="List any allergies (medications, foods, environmental, etc.)"
+                  placeholder={t('profile.medicalInfo.enterAllergies')}
                   rows={3}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="medicalConditions">Medical Conditions</Label>
+                <Label htmlFor="medicalConditions">{t('profile.medicalInfo.medicalConditions')}</Label>
                 <Textarea
                   id="medicalConditions"
                   value={profileData.medicalConditions}
                   onChange={(e) => handleInputChange('medicalConditions', e.target.value)}
-                  placeholder="List any chronic conditions, past surgeries, etc."
+                  placeholder={t('profile.medicalInfo.enterMedicalConditions')}
                   rows={3}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="medications">Current Medications</Label>
+                <Label htmlFor="medications">{t('profile.medicalInfo.medications')}</Label>
                 <Textarea
                   id="medications"
                   value={profileData.medications}
                   onChange={(e) => handleInputChange('medications', e.target.value)}
-                  placeholder="List current medications, dosages, and frequency"
+                  placeholder={t('profile.medicalInfo.enterMedications')}
                   rows={3}
                 />
               </div>
@@ -399,30 +444,30 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5" />
-                Insurance Information
+                {t('profile.insuranceInfo.title')}
               </CardTitle>
               <CardDescription>
-                Your health insurance details
+                {t('profile.insuranceInfo.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="insuranceProvider">Insurance Provider</Label>
+                  <Label htmlFor="insuranceProvider">{t('profile.insuranceInfo.insuranceProvider')}</Label>
                   <Input
                     id="insuranceProvider"
                     value={profileData.insuranceProvider}
                     onChange={(e) => handleInputChange('insuranceProvider', e.target.value)}
-                    placeholder="Insurance company name"
+                    placeholder={t('profile.insuranceInfo.enterInsuranceProvider')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="insuranceNumber">Insurance Number</Label>
+                  <Label htmlFor="insuranceNumber">{t('profile.insuranceInfo.insuranceNumber')}</Label>
                   <Input
                     id="insuranceNumber"
                     value={profileData.insuranceNumber}
                     onChange={(e) => handleInputChange('insuranceNumber', e.target.value)}
-                    placeholder="Policy/member ID number"
+                    placeholder={t('profile.insuranceInfo.enterInsuranceNumber')}
                   />
                 </div>
               </div>
@@ -447,7 +492,7 @@ export default function Profile() {
           <div className="flex justify-center">
             <Button type="submit" size="lg" disabled={saving} className="px-8">
               {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Profile & Continue
+              {t('profile.actions.saveProfile')}
             </Button>
           </div>
         </form>
@@ -458,10 +503,10 @@ export default function Profile() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <QrCode className="h-5 w-5" />
-                Your Medical Profile QR Code
+                {t('profile.qrCode.title')}
               </CardTitle>
               <CardDescription>
-                Show this QR code to receptionists for quick access to your medical information
+                {t('profile.qrCode.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">
@@ -469,7 +514,7 @@ export default function Profile() {
                 <QRCode value={qrCodeUrl} size={200} />
               </div>
               <p className="text-sm text-gray-600">
-                This QR code contains a link to your complete medical profile for healthcare providers.
+                {t('profile.qrCode.info')}
               </p>
             </CardContent>
           </Card>
