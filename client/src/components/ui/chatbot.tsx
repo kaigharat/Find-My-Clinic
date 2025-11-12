@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,20 +17,19 @@ interface Message {
 }
 
 export default function Chatbot() {
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm your healthcare assistant. I can help you with general health questions, symptom information, and guide you to appropriate care. How can I assist you today?",
+      content: t('chatbot.greeting', "Hello! I'm your healthcare assistant. I can help you with general health questions, symptom information, and guide you to appropriate care. How can I assist you today?"),
       sender: 'bot',
       timestamp: new Date(),
     },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [position, setPosition] = useState({ x: window.innerWidth - 80, y: window.innerHeight - 80 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
@@ -48,56 +48,7 @@ export default function Chatbot() {
     }
   }, [isOpen]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (chatRef.current) {
-      const rect = chatRef.current.getBoundingClientRect();
-      setDragOffset({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
-      setIsDragging(true);
-    }
-  };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
-      let newX = e.clientX - dragOffset.x;
-      let newY = e.clientY - dragOffset.y;
-
-      // Keep the chat within viewport bounds
-      const chatWidth = 400;
-      const chatHeight = 550;
-      const buttonSize = 56; // Size of the toggle button
-
-      // Constrain movement to keep both button and chat visible
-      newX = Math.max(10, Math.min(newX, window.innerWidth - chatWidth - 10));
-      newY = Math.max(10, Math.min(newY, window.innerHeight - chatHeight - 10));
-
-      setPosition({
-        x: newX,
-        y: newY,
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging]);
 
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
@@ -137,7 +88,14 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
+      const currentLanguage = i18n.language;
+      const languageInstruction = currentLanguage === 'hi' ? 'Please respond in Hindi (Devanagari script).' :
+                                  currentLanguage === 'mr' ? 'Please respond in Marathi (Devanagari script).' :
+                                  'Please respond in English.';
+
       const prompt = `You are a helpful healthcare assistant chatbot for Find My Clinic. You provide general health information, answer questions about symptoms, and help users find appropriate medical care. Always be empathetic, informative, and remind users that you're not a substitute for professional medical advice.
+
+${languageInstruction}
 
 User question: ${content}
 
@@ -195,14 +153,8 @@ Please provide a helpful, accurate response. If the question involves serious sy
 
   return (
     <>
-      {/* Draggable Floating Chatbot Toggle Button */}
-      <div
-        className="fixed z-50 cursor-move"
-        style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-        }}
-      >
+      {/* Floating Chatbot Toggle Button */}
+      <div className="fixed bottom-4 right-4 z-50">
         <Button
           onClick={() => setIsOpen(!isOpen)}
           className="h-14 w-14 rounded-full bg-gradient-to-r from-primary to-secondary hover:shadow-xl hover:scale-110 transition-all duration-300 shadow-lg"
@@ -216,23 +168,15 @@ Please provide a helpful, accurate response. If the question involves serious sy
         </Button>
       </div>
 
-      {/* Draggable Floating Chatbot Window */}
+      {/* Floating Chatbot Window */}
       {isOpen && (
-        <div
-          ref={chatRef}
-          className="fixed z-50 cursor-move select-none"
-          style={{
-            left: `${Math.max(10, Math.min(position.x - 320, window.innerWidth - 410))}px`, // Keep chat window in bounds
-            top: `${Math.max(10, Math.min(position.y - 550, window.innerHeight - 560))}px`,
-          }}
-          onMouseDown={handleMouseDown}
-        >
+        <div className="fixed bottom-20 right-4 z-50">
           <Card className="w-96 h-[500px] shadow-2xl border-2 animate-fade-in">
-            <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-secondary/5 cursor-move">
+            <CardHeader className="pb-3 bg-gradient-to-r from-primary/5 to-secondary/5">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg truncate">
                   <Bot className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="truncate">Health Assistant</span>
+                  <span className="truncate">{t('chatbot.title', 'Health Assistant')}</span>
                 </CardTitle>
                 <Button
                   onClick={() => setIsOpen(false)}
@@ -308,7 +252,7 @@ Please provide a helpful, accurate response. If the question involves serious sy
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Ask me about health concerns..."
+                    placeholder={t('chatbot.placeholder', 'Ask me about health concerns...')}
                     disabled={isLoading}
                     className="flex-1"
                   />
@@ -322,7 +266,7 @@ Please provide a helpful, accurate response. If the question involves serious sy
                   </Button>
                 </form>
                 <p className="text-xs text-muted-foreground mt-2 text-center">
-                  This is not medical advice. Consult healthcare professionals for medical concerns.
+                  {t('chatbot.disclaimer', 'This is not medical advice. Consult healthcare professionals for medical concerns.')}
                 </p>
               </div>
             </CardContent>

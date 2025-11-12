@@ -12,7 +12,13 @@ export type User = {
 export type Clinic = {
   id: string;
   name: string;
+  name_en: string | null;
+  name_hi: string | null;
+  name_mr: string | null;
   address: string;
+  address_en: string | null;
+  address_hi: string | null;
+  address_mr: string | null;
   phone: string;
   email: string;
   latitude: string;
@@ -116,7 +122,13 @@ export const insertUserSchema = z.object({
 
 export const insertClinicSchema = z.object({
   name: z.string(),
+  name_en: z.string().optional(),
+  name_hi: z.string().optional(),
+  name_mr: z.string().optional(),
   address: z.string(),
+  address_en: z.string().optional(),
+  address_hi: z.string().optional(),
+  address_mr: z.string().optional(),
   phone: z.string(),
   email: z.string(),
   latitude: z.string(),
@@ -147,7 +159,7 @@ export const insertContactRequestSchema = z.object({
   email: z.string(),
   phone: z.string().optional(),
   message: z.string().optional(),
-  clinicName: z.string().optional(),
+  clinic_name: z.string().optional(),
 });
 
 export const insertDoctorSchema = z.object({

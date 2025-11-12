@@ -1,0 +1,171 @@
+{
+  "nav": {
+    "home": "Home",
+    "findClinics": "Find Clinics",
+    "symptomAnalysis": "Symptom Analysis",
+    "myProfile": "My Profile",
+    "dashboard": "Dashboard",
+    "about": "About",
+    "forClinics": "For Clinics",
+    "loginSignup": "Login / Sign Up",
+    "logout": "Logout",
+    "goToDashboard": "Go to Dashboard"
+  },
+  "hero": {
+    "title": "Stop Waiting, Start Healing",
+    "subtitle": "Find nearby clinics, view real-time wait times, and join queues digitally. Make healthcare visits predictable and stress-free.",
+    "goToDashboard": "Go to Dashboard",
+    "findClinicNow": "Find a Clinic Now",
+    "analyzeSymptoms": "Analyze Symptoms",
+    "loginSignup": "Login / Sign Up",
+    "forClinics": "For Clinics",
+    "about": "About",
+    "clinicsConnected": "Clinics Connected",
+    "avgTimeSaved": "Avg. Time Saved",
+    "patientsServed": "Patients Served"
+  },
+  "problem": {
+    "title": "The Problem with Current Clinic Visits",
+    "wastedTime": {
+      "title": "Wasted Time in Queues",
+      "description": "Hours spent waiting in crowded clinics with no idea when you'll be seen."
+    },
+    "staffBurnout": {
+      "title": "Staff Burnout",
+      "description": "Healthcare workers overwhelmed by manual queue management and administrative chaos."
+    },
+    "poorExperience": {
+      "title": "Poor Patient Experience",
+      "description": "Unpredictable wait times leading to stress and frustration for patients seeking care."
+    }
+  },
+  "solution": {
+    "title": "Our Smart Solution",
+    "subtitle": "Find My Clinic bridges the information gap in local healthcare with real-time queue management and intelligent wait time predictions.",
+    "realTimeDiscovery": {
+      "title": "Real-Time Clinic Discovery",
+      "description": "Find nearby clinics instantly with live wait times and availability status."
+    },
+    "digitalQueue": {
+      "title": "Digital Queue Management",
+      "description": "Get your queue token remotely and receive notifications when it's your turn."
+    },
+    "qrCode": {
+      "title": "Personal QR Code Generator",
+      "description": "Generate a personal QR code to instantly share your details and speed up access."
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1": {
+      "title": "Find Your Clinic",
+      "description": "Search for nearby clinics and view real-time wait times."
+    },
+    "step2": {
+      "title": "Join the Queue",
+      "description": "Get your digital queue token and track your position."
+    },
+    "step3": {
+      "title": "Get Notified",
+      "description": "Receive notifications when it's your turn to be seen."
+    }
+  },
+  "findClinics": {
+    "title": "Find Clinics Near You",
+    "subtitle": "Real-time availability and wait times at your fingertips"
+  },
+  "features": {
+    "title": "What Makes Us Different",
+    "subtitle": "Smart, inclusive, and accessible healthcare technology",
+    "qrCode": {
+      "title": "Personal QR Code Generator",
+      "description": "Generate a personal QR code to instantly share your details and speed up access.",
+      "badge": "Digital + Physical Access"
+    },
+    "smartPredictions": {
+      "title": "Smart Predictions",
+      "description": "AI-powered predictive intelligence analyzes historical data and current patterns to provide the most accurate wait time estimates.",
+      "badge": "95%+ Accuracy Rate"
+    },
+    "liteMode": {
+      "title": "Lite Mode Available",
+      "description": "WhatsApp and SMS integration for clinics with limited tech infrastructure, making our platform accessible to every healthcare provider.",
+      "badge": "No App Required"
+    }
+  },
+  "forClinics": {
+    "title": "Transform Your Clinic Operations",
+    "subtitle": "Reduce administrative burden and improve patient satisfaction",
+    "efficientManagement": {
+      "title": "Efficient Digital Management",
+      "description": "Simple admin panel or WhatsApp bot to manage queues, update wait times, and scan patient QR codes for instant check-in."
+    },
+    "reducedBurnout": {
+      "title": "Reduced Staff Burnout",
+      "description": "Eliminate manual queue management stress and reduce administrative chaos with automated patient flow."
+    },
+    "betterAllocation": {
+      "title": "Better Resource Allocation",
+      "description": "Optimize staff scheduling and improve operational efficiency with predictive patient flow data."
+    },
+    "requestDemo": "Request a Demo"
+  },
+  "technology": {
+    "title": "Built on Robust Technology",
+    "subtitle": "Enterprise-grade architecture designed for scalability, reliability, and seamless user experience",
+    "microservices": {
+      "title": "Microservices Architecture",
+      "description": "Scalable and reliable system architecture ensuring 99.9% uptime and seamless performance."
+    },
+    "realTime": {
+      "title": "Real-Time Processing",
+      "description": "Lightning-fast data processing with sub-second response times for live queue updates."
+    },
+    "security": {
+      "title": "Enterprise Security",
+      "description": "Bank-grade security with end-to-end encryption and compliance with healthcare data standards."
+    }
+  },
+  "team": {
+    "title": "Our Team",
+    "subtitle": "Meet the passionate team behind Find My Clinic",
+    "yashodhan": {
+      "name": "Yashodhan Rajapkar",
+      "role": "Founder & Lead Developer",
+      "bio": "Innovative founder and lead developer with a passion for creating impactful technology solutions."
+    },
+    "kaivalya": {
+      "name": "Kaivalya Gharat",
+      "role": "Co-Founder & Developer",
+      "bio": "Creative co-founder and developer dedicated to building user-friendly applications that solve real-world problems."
+    },
+    "swarali": {
+      "name": "Swarali Mahishi",
+      "role": "Co-Founder & Developer",
+      "bio": "Dedicated co-founder and developer focused on developing accessible and inclusive technology for everyone."
+    }
+  },
+  "emergency": {
+    "title": "Emergency Services",
+    "description": "In case of emergency, contact the appropriate service immediately.",
+    "ambulance": "Ambulance",
+    "police": "Police",
+    "fire": "Fire Brigade",
+    "helpline": "Women Helpline",
+    "childline": "Child Helpline",
+    "available": "Emergency services are available 24/7"
+  },
+  "footer": {
+    "description": "Find My Clinic - Making healthcare visits predictable and stress-free.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved."
+  },
+  "chatbot": {
+    "title": "Health Assistant",
+    "greeting": "Hello! I'm your healthcare assistant. I can help you with general health questions, symptom information, and guide you to appropriate care. How can I assist you today?",
+    "placeholder": "Ask me about health concerns...",
+    "disclaimer": "This is not medical advice. Consult healthcare professionals for medical concerns."
+  }
+}

@@ -1,0 +1,688 @@
+{
+  "nav": {
+    "home": "Home",
+    "findClinics": "Find Clinics",
+    "symptomAnalysis": "Symptom Analysis",
+    "myProfile": "My Profile",
+    "dashboard": "Dashboard",
+    "about": "About",
+    "forClinics": "For Clinics",
+    "loginSignup": "Login / Sign Up",
+    "logout": "Logout",
+    "goToDashboard": "Go to Dashboard"
+  },
+  "hero": {
+    "title": "Stop Waiting, Start Healing",
+    "subtitle": "Find nearby clinics, view real-time wait times, and join queues digitally. Make healthcare visits predictable and stress-free.",
+    "goToDashboard": "Go to Dashboard",
+    "findClinicNow": "Find a Clinic Now",
+    "analyzeSymptoms": "Analyze Symptoms",
+    "loginSignup": "Login / Sign Up",
+    "forClinics": "For Clinics",
+    "about": "About",
+    "clinicsConnected": "Clinics Connected",
+    "avgTimeSaved": "Avg. Time Saved",
+    "patientsServed": "Patients Served"
+  },
+  "problem": {
+    "title": "The Problem with Current Clinic Visits",
+    "wastedTime": {
+      "title": "Wasted Time in Queues",
+      "description": "Hours spent waiting in crowded clinics with no idea when you'll be seen."
+    },
+    "staffBurnout": {
+      "title": "Staff Burnout",
+      "description": "Healthcare workers overwhelmed by manual queue management and administrative chaos."
+    },
+    "poorExperience": {
+      "title": "Poor Patient Experience",
+      "description": "Unpredictable wait times leading to stress and frustration for patients seeking care."
+    }
+  },
+  "solution": {
+    "title": "Our Smart Solution",
+    "subtitle": "Find My Clinic bridges the information gap in local healthcare with real-time queue management and intelligent wait time predictions.",
+    "realTimeDiscovery": {
+      "title": "Real-Time Clinic Discovery",
+      "description": "Find nearby clinics instantly with live wait times and availability status."
+    },
+    "digitalQueue": {
+      "title": "Digital Queue Management",
+      "description": "Get your queue token remotely and receive notifications when it's your turn."
+    },
+    "qrCode": {
+      "title": "Personal QR Code Generator",
+      "description": "Generate a personal QR code to instantly share your details and speed up access."
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1": {
+      "title": "Find Your Clinic",
+      "description": "Search for nearby clinics and view real-time wait times."
+    },
+    "step2": {
+      "title": "Join the Queue",
+      "description": "Get your digital queue token and track your position."
+    },
+    "step3": {
+      "title": "Get Notified",
+      "description": "Receive notifications when it's your turn to be seen."
+    }
+  },
+  "findClinics": {
+    "title": "Find Clinics Near You",
+    "subtitle": "Real-time availability and wait times at your fingertips"
+  },
+  "features": {
+    "title": "What Makes Us Different",
+    "subtitle": "Smart, inclusive, and accessible healthcare technology",
+    "qrCode": {
+      "title": "Personal QR Code Generator",
+      "description": "Generate a personal QR code to instantly share your details and speed up access.",
+      "badge": "Digital + Physical Access"
+    },
+    "smartPredictions": {
+      "title": "Smart Predictions",
+      "description": "AI-powered predictive intelligence analyzes historical data and current patterns to provide the most accurate wait time estimates.",
+      "badge": "95%+ Accuracy Rate"
+    },
+    "liteMode": {
+      "title": "Lite Mode Available",
+      "description": "WhatsApp and SMS integration for clinics with limited tech infrastructure, making our platform accessible to every healthcare provider.",
+      "badge": "No App Required"
+    }
+  },
+  "forClinics": {
+    "title": "Transform Your Clinic Operations",
+    "subtitle": "Reduce administrative burden and improve patient satisfaction",
+    "efficientManagement": {
+      "title": "Efficient Digital Management",
+      "description": "Simple admin panel or WhatsApp bot to manage queues, update wait times, and scan patient QR codes for instant check-in."
+    },
+    "reducedBurnout": {
+      "title": "Reduced Staff Burnout",
+      "description": "Eliminate manual queue management stress and reduce administrative chaos with automated patient flow."
+    },
+    "betterAllocation": {
+      "title": "Better Resource Allocation",
+      "description": "Optimize staff scheduling and improve operational efficiency with predictive patient flow data."
+    },
+    "requestDemo": "Request a Demo"
+  },
+  "technology": {
+    "title": "Built on Robust Technology",
+    "subtitle": "Enterprise-grade architecture designed for scalability, reliability, and seamless user experience",
+    "microservices": {
+      "title": "Microservices Architecture",
+      "description": "Scalable and reliable system architecture ensuring 99.9% uptime and seamless performance."
+    },
+    "realTime": {
+      "title": "Real-Time Processing",
+      "description": "Lightning-fast data processing with sub-second response times for live queue updates."
+    },
+    "security": {
+      "title": "Enterprise Security",
+      "description": "Bank-grade security with end-to-end encryption and compliance with healthcare data standards."
+    }
+  },
+  "team": {
+    "title": "Our Team",
+    "subtitle": "Meet the passionate team behind Find My Clinic",
+    "yashodhan": {
+      "name": "Yashodhan Rajapkar",
+      "role": "Founder & Lead Developer",
+      "bio": "Innovative founder and lead developer with a passion for creating impactful technology solutions."
+    },
+    "kaivalya": {
+      "name": "Kaivalya Gharat",
+      "role": "Co-Founder & Developer",
+      "bio": "Creative co-founder and developer dedicated to building user-friendly applications that solve real-world problems."
+    },
+    "swarali": {
+      "name": "Swarali Mahishi",
+      "role": "Co-Founder & Developer",
+      "bio": "Dedicated co-founder and developer focused on developing accessible and inclusive technology for everyone."
+    }
+  },
+  "emergency": {
+    "title": "Emergency Services",
+    "description": "In case of emergency, contact the appropriate service immediately.",
+    "ambulance": "Ambulance",
+    "police": "Police",
+    "fire": "Fire Brigade",
+    "helpline": "Women Helpline",
+    "childline": "Child Helpline",
+    "available": "Emergency services are available 24/7"
+  },
+  "about": {
+    "title": "About Find My Clinic",
+    "subtitle": "Our mission is to create a more efficient, accessible, and organized local healthcare network for the entire community through innovative technology solutions.",
+    "mission": {
+      "title": "Our Mission",
+      "description": "To eliminate the frustration of uncertain wait times in healthcare by providing real-time, accessible technology that connects patients with clinics efficiently and compassionately."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "To create a comprehensive healthcare ecosystem where every clinic visit is predictable, every patient is informed, and healthcare providers can focus on what they do best—caring for people."
+    },
+    "values": {
+      "title": "Our Values",
+      "subtitle": "The principles that guide our work and shape our platform",
+      "accessibility": {
+        "title": "Accessibility",
+        "description": "Healthcare technology should be inclusive and accessible to everyone, regardless of their technical comfort level or infrastructure."
+      },
+      "empathy": {
+        "title": "Empathy",
+        "description": "We understand the stress and uncertainty of seeking healthcare, and we design with compassion for both patients and providers."
+      },
+      "innovation": {
+        "title": "Innovation",
+        "description": "We continuously innovate to solve real healthcare challenges with practical, user-friendly technology solutions."
+      }
+    },
+    "story": {
+      "title": "Our Story",
+      "paragraph1": "Find My Clinic was born from a simple observation: healthcare visits don't have to be unpredictable and stressful. Our founders experienced firsthand the frustration of long, uncertain waits at clinics and witnessed the burnout affecting healthcare staff managing chaotic queues.",
+      "paragraph2": "We realized that the gap wasn't in medical expertise—it was in information flow. Patients needed to know when to arrive, and clinics needed tools to manage their patient flow efficiently. This insight led to the creation of our platform that bridges this information gap with real-time queue management.",
+      "paragraph3": "Today, Find My Clinic serves as a comprehensive solution that not only reduces wait times and stress for patients but also alleviates administrative burden for healthcare providers. We're proud to be building technology that makes healthcare more human and accessible for everyone."
+    }
+  },
+  "footer": {
+    "description": "Find My Clinic - Making healthcare visits predictable and stress-free.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved."
+  },
+  "auth": {
+    "title": "Welcome to Find My Clinic",
+    "subtitle": "Sign in to your account or create a new one",
+    "chooseMethod": "Choose how to sign in:",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithEmail": "Continue with Email",
+    "signInAsPatient": "Sign in as Patient",
+    "usingGoogle": "Using Google account",
+    "continueWithEmailAsPatient": "Continue with email as Patient",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "enterEmail": "Enter your email",
+    "enterPassword": "Enter your password",
+    "name": "Name",
+    "enterName": "Enter your name",
+    "createPassword": "Create a password",
+    "confirmPassword": "Confirm Password",
+    "confirmYourPassword": "Confirm your password",
+    "signUpAsPatient": "Sign Up as Patient",
+    "backToOptions": "← Back to options",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "checkEmailConfirmation": "Check your email for the confirmation link!"
+  },
+  "clinics": {
+    "hero": {
+      "title": "Transform Your Clinic Operations",
+      "subtitle": "Reduce administrative burden and improve patient satisfaction with our intelligent queue management system",
+      "requestDemo": "Request a Demo"
+    },
+    "benefits": {
+      "efficientManagement": {
+        "title": "Efficient Digital Management",
+        "description": "Simple admin panel or WhatsApp bot integration for seamless queue management without complex training."
+      },
+      "reducedBurnout": {
+        "title": "Reduced Staff Burnout",
+        "description": "Eliminate manual queue management stress and reduce administrative chaos with automated patient flow."
+      },
+      "betterAllocation": {
+        "title": "Better Resource Allocation",
+        "description": "Optimize staff scheduling and improve operational efficiency with predictive patient flow data."
+      }
+    },
+    "features": {
+      "title": "Everything You Need to Get Started",
+      "subtitle": "Our platform is designed for easy adoption with minimal training required",
+      "whatsappIntegration": {
+        "title": "WhatsApp Integration",
+        "description": "Manage queues directly through WhatsApp - no additional training required."
+      },
+      "realTimeUpdates": {
+        "title": "Real-time Updates",
+        "description": "Automatic patient notifications and wait time adjustments."
+      },
+      "analyticsDashboard": {
+        "title": "Analytics Dashboard",
+        "description": "Track patient flow patterns and optimize your clinic operations."
+      },
+      "qrCodeSystem": {
+        "title": "QR Code System",
+        "description": "Provide a public QR for discovery and scan patients' personal QR codes for secure, instant check-in."
+      }
+    },
+    "demoDialog": {
+      "title": "Request a Personalized Demo",
+      "yourName": "Your Name",
+      "clinicName": "Clinic Name",
+      "email": "Email",
+      "phone": "Phone (Optional)",
+      "message": "Message (Optional)",
+      "enterFullName": "Enter your full name",
+      "enterClinicName": "Enter your clinic name",
+      "enterEmail": "Enter your email",
+      "enterPhone": "Enter your phone number",
+      "tellUsNeeds": "Tell us about your clinic's needs...",
+      "cancel": "Cancel",
+      "requestDemo": "Request Demo",
+      "submitting": "Submitting...",
+      "requestReceived": "Request Received",
+      "receivedDetails": "We have received your details and request. We will be in touch shortly.",
+      "error": "Error",
+      "failedSubmit": "Failed to submit demo request. Please try again."
+    },
+    "getStarted": {
+      "title": "Ready to Get Started?",
+      "description": "Join hundreds of clinics already using Find My Clinic to improve their patient experience and operational efficiency.",
+      "getStartedToday": "Get Started Today",
+      "noSetupFees": "No setup fees • 30-day free trial • Cancel anytime"
+    },
+    "bookingDialog": {
+      "title": "Book Appointment",
+      "appointmentDetails": "Appointment Details",
+      "doctor": "Doctor",
+      "specialty": "Specialty",
+      "clinic": "Clinic",
+      "address": "Address",
+      "phone": "Phone",
+      "estimatedWaitTime": "Estimated Wait Time",
+      "approximately": "Approximately 30 minutes",
+      "tokenSms": "You'll receive a token number and SMS updates about your position in queue.",
+      "cancel": "Cancel",
+      "confirmBooking": "Confirm Booking",
+      "appointmentBooked": "Appointment Booked!",
+      "tokenNumber": "Your token number is",
+      "estimatedWait": "Estimated wait time:",
+      "minutes": "minutes",
+      "checkDashboard": "Check your dashboard for status updates.",
+      "bookingFailed": "Booking Failed",
+      "unableToBook": "Unable to book appointment. Please try again."
+    },
+    "liteMode": {
+      "title": "Lite Mode Available",
+      "description": "Don't have advanced tech infrastructure? No problem! Our WhatsApp and SMS integration makes our platform accessible to every healthcare provider.",
+      "noAppRequired": "✓ No App Required",
+      "worksBasicPhones": "✓ Works with Basic Phones",
+      "instantSetup": "✓ Instant Setup"
+    }
+  },
+  "patients": {
+    "title": "Find Clinics Near You",
+    "subtitle": "Real-time availability and wait times at your fingertips",
+    "queueStatus": {
+      "title": "Queue Status",
+      "position": "You are #{{position}} in queue at {{clinicName}}",
+      "estimatedWait": "Estimated wait time: {{minutes}} minutes",
+      "leaveQueue": "Leave Queue"
+    },
+    "location": {
+      "gettingLocation": "Getting your location...",
+      "locationDetected": "Location detected! Clinics sorted by distance from your location.",
+      "permissionDenied": "Location access denied. Please enable location permissions.",
+      "unavailable": "Location information is unavailable.",
+      "timeout": "Location request timed out.",
+      "tryAgain": "Try again"
+    },
+    "search": {
+      "placeholder": "Search clinics by name or area..."
+    },
+    "clinicCard": {
+      "waitTime": "Wait Time",
+      "inQueue": "In Queue",
+      "getDirections": "Get Directions",
+      "joinQueue": "Join Queue",
+      "clickToSeeDoctors": "Click card to see available doctors"
+    },
+    "noClinics": {
+      "title": "No clinics found",
+      "description": "Try adjusting your search or check back later."
+    },
+    "doctorsDialog": {
+      "title": "Available Doctors at {{clinicName}}",
+      "noDoctors": "No doctors available today at this clinic.",
+      "joinQueue": "Join Queue",
+      "close": "Close",
+      "yearsExp": "years exp.",
+      "consultationFee": "{{fee}}"
+    },
+    "status": {
+      "open": "Open",
+      "busy": "Busy",
+      "closed": "Closed"
+    },
+    "distance": {
+      "meters": "{{distance}}m away",
+      "kilometers": "{{distance}} km away"
+    }
+  },
+
+  "profile": {
+    "title": "Complete Your Medical Profile",
+    "subtitle": "Help us provide you with the best healthcare experience",
+    "sections": {
+      "personalInfo": {
+        "title": "Personal Information",
+        "description": "Basic information about yourself"
+      },
+      "contactInfo": {
+        "title": "Contact Information",
+        "description": "How to reach you in case of emergency"
+      },
+      "medicalInfo": {
+        "title": "Medical Information",
+        "description": "Important medical details for your healthcare providers"
+      }
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "description": "Basic information about yourself",
+      "fullName": "Full Name",
+      "enterFullName": "Enter your full name",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "selectGender": "Select gender",
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "preferNotToSay": "Prefer not to say",
+      "bloodType": "Blood Type",
+      "selectBloodType": "Select blood type"
+    },
+    "contactInfo": {
+      "title": "Contact Information",
+      "description": "How to reach you in case of emergency",
+      "phone": "Phone Number",
+      "enterPhone": "+1234567890",
+      "emergencyContact": "Emergency Contact Name",
+      "enterEmergencyContact": "Emergency contact name",
+      "emergencyPhone": "Emergency Contact Phone",
+      "enterEmergencyPhone": "+1234567890"
+    },
+    "medicalInfo": {
+      "title": "Medical Information",
+      "description": "Important medical details for your healthcare providers",
+      "allergies": "Allergies",
+      "enterAllergies": "List any allergies (medications, foods, environmental, etc.)",
+      "medicalConditions": "Medical Conditions",
+      "enterMedicalConditions": "List any chronic conditions, past surgeries, etc.",
+      "medications": "Current Medications",
+      "enterMedications": "List current medications, dosages, and frequency"
+    },
+    "insuranceInfo": {
+      "title": "Insurance Information",
+      "description": "Your health insurance details",
+      "insuranceProvider": "Insurance Provider",
+      "enterInsuranceProvider": "Insurance company name",
+      "insuranceNumber": "Insurance Number",
+      "enterInsuranceNumber": "Policy/member ID number"
+    },
+    "qrCode": {
+      "title": "Your Medical Profile QR Code",
+      "description": "Show this QR code to receptionists for quick access to your medical information",
+      "info": "This QR code contains your complete medical profile information for healthcare providers.",
+      "medicalProfile": "MEDICAL PROFILE",
+      "emergencyContact": "EMERGENCY CONTACT",
+      "medicalInfo": "MEDICAL INFO",
+      "insurance": "INSURANCE",
+      "name": "Name",
+      "dob": "DOB",
+      "gender": "Gender",
+      "phone": "Phone",
+      "bloodType": "Blood Type",
+      "allergies": "Allergies",
+      "conditions": "Conditions",
+      "medications": "Medications",
+      "provider": "Provider",
+      "number": "Number",
+      "notSpecified": "Not specified",
+      "none": "None"
+    },
+    "actions": {
+      "saveProfile": "Save Profile & Continue",
+      "saving": "Saving...",
+      "success": "Profile saved successfully!",
+      "error": "Failed to save profile. Please try again.",
+      "loadError": "Failed to load profile data"
+    },
+    "bloodTypes": {
+      "A+": "A+",
+      "A-": "A-",
+      "B+": "B+",
+      "B-": "B-",
+      "AB+": "AB+",
+      "AB-": "AB-",
+      "O+": "O+",
+      "O-": "O-"
+    }
+  },
+  "dashboard": {
+    "title": "Patient Dashboard",
+    "welcome": "Welcome back, {{name}}",
+    "editProfile": "Edit Profile",
+    "stats": {
+      "totalVisits": "Total Visits",
+      "allTime": "All time",
+      "activeTokens": "Active Tokens",
+      "inQueue": "In queue",
+      "favoriteClinic": "Favorite Clinic",
+      "mostVisited": "Most visited",
+      "none": "None"
+    },
+    "features": {
+      "findClinics": {
+        "title": "Find Clinics",
+        "description": "Discover clinics on a map or scan QR codes for quick access",
+        "button": "Find Clinics"
+      },
+      "myAppointments": {
+        "title": "My Appointments",
+        "noAppointments": "No active appointments",
+        "bookAppointment": "Book an appointment to see it here",
+        "token": "Token #{{number}}",
+        "generalQueue": "General Clinic Queue",
+        "cancel": "Cancel",
+        "cancelled": "Appointment cancelled successfully!"
+      },
+      "userProfile": {
+        "title": "User Profile",
+        "description": "Manage your personal information and medical history",
+        "viewProfile": "View Profile"
+      }
+    },
+    "profile": {
+      "title": "Profile Information",
+      "edit": "Edit",
+      "fields": {
+        "fullName": "Full Name",
+        "phone": "Phone",
+        "dateOfBirth": "Date of Birth",
+        "gender": "Gender",
+        "bloodType": "Blood Type",
+        "emergencyContact": "Emergency Contact",
+        "emergencyPhone": "Emergency Phone",
+        "insuranceProvider": "Insurance Provider",
+        "insuranceNumber": "Insurance Number",
+        "allergies": "Allergies",
+        "medicalConditions": "Medical Conditions",
+        "medications": "Medications"
+      },
+      "notProvided": "Not provided",
+      "noneListed": "None listed"
+    },
+    "qrCode": {
+      "title": "Medical Profile QR Code",
+      "description": "Show this QR code to healthcare providers for quick access to your complete medical information.",
+      "scanInfo": "Scan this code at clinics for instant profile access",
+      "scanInstruction": "Scan this code at clinics for instant profile access",
+      "incompleteProfile": "Complete your profile (name, phone, date of birth) to generate your QR code"
+    },
+    "visits": {
+      "title": "Recent Clinic Visits",
+      "loading": "Loading visits...",
+      "noVisits": "No clinic visits yet",
+      "visitHistory": "Your visit history will appear here",
+      "completed": "completed"
+    },
+    "actions": {
+      "profileSaved": "Profile saved successfully!",
+      "saveFailed": "Failed to save profile. Please try again.",
+      "cancelFailed": "Failed to cancel appointment. Please try again."
+    },
+    "accessDenied": {
+      "title": "Access Denied",
+      "description": "This dashboard is for patients only."
+    }
+  },
+  "landing": {
+    "title": "Stop Waiting, Start Healing",
+    "subtitle": "Find nearby clinics, view real-time wait times, and join queues digitally. Make healthcare visits predictable and stress-free.",
+    "login": "Login",
+    "signup": "Sign Up",
+    "clinicsConnected": "Clinics Connected",
+    "avgTimeSaved": "Avg. Time Saved",
+    "patientsServed": "Patients Served"
+  },
+  "notFound": {
+    "title": "404 Page Not Found",
+    "description": "Did you forget to add the page to the router?"
+  },
+  "patientInfo": {
+    "title": "Patient Information",
+    "subtitle": "Medical profile details",
+    "personalInfo": "Personal Information",
+    "fullName": "Full Name",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "bloodType": "Blood Type",
+    "contactInfo": "Contact Information",
+    "phone": "Phone Number",
+    "emergencyContact": "Emergency Contact",
+    "emergencyPhone": "Emergency Contact Phone",
+    "medicalInfo": "Medical Information",
+    "allergies": "Allergies",
+    "medicalConditions": "Medical Conditions",
+    "medications": "Current Medications",
+    "noneSpecified": "None specified",
+    "insuranceInfo": "Insurance Information",
+    "insuranceProvider": "Insurance Provider",
+    "insuranceNumber": "Insurance Number",
+    "notSpecified": "Not specified"
+  },
+  "publicMedicalView": {
+    "title": "Medical Information",
+    "subtitle": "Patient medical profile details"
+  },
+  "queueStatus": {
+    "title": "Check Queue Status",
+    "subtitle": "Enter your token number to check your position in the queue",
+    "backToHome": "Back to Home",
+    "findToken": "Find Your Token",
+    "tokenNumber": "Token Number",
+    "placeholder": "Enter your token number (e.g., 123)",
+    "checkStatus": "Check Status",
+    "searching": "Searching...",
+    "tokenStatus": "Token Status",
+    "token": "Token #{{number}}",
+    "issuedOn": "Issued on {{date}}",
+    "clinic": "Clinic",
+    "doctor": "Doctor",
+    "estimatedWaitTime": "Estimated Wait Time",
+    "approximately": "Approximately {{minutes}} minutes",
+    "arriveOnTime": "Please arrive at the clinic on time. You will be called when it's your turn.",
+    "yourTurn": "Your Turn!",
+    "proceedImmediately": "Please proceed to the clinic immediately. The doctor is ready to see you.",
+    "visitCompleted": "Visit Completed",
+    "thankYou": "Thank you for visiting. We hope to see you again!",
+    "tokenNotFound": "Token Not Found",
+    "notFoundDescription": "We couldn't find a token with that number. Please check your token number and try again.",
+    "checkBack": "If you just booked, please wait a few minutes and try again.",
+    "tokenRequired": "Token Required",
+    "enterTokenNumber": "Please enter your token number",
+    "searchFailed": "Search Failed",
+    "unableToFindToken": "Unable to find token. Please try again.",
+    "tokenHash": "Token #",
+    "issuedOnText": "Issued on",
+    "minutes": "minutes"
+  },
+  "symptomAnalysis": {
+    "title": "Symptom Analysis",
+    "subtitle": "Get AI-powered analysis of your symptoms",
+    "backToHome": "Back to Home",
+  "input": {
+    "title": "Describe Your Symptoms",
+    "description": "Please provide detailed information about your symptoms",
+    "age": "Age",
+    "agePlaceholder": "Enter your age",
+    "gender": "Gender",
+    "genderPlaceholder": "Select gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "location": "Location",
+    "locationPlaceholder": "Enter your location",
+    "descriptionLabel": "What symptoms are you experiencing?",
+    "descriptionPlaceholder": "Please describe your symptoms in detail (e.g., headache, fever, cough, pain location, etc.)",
+    "severity": "Severity",
+    "severityLabel": "How severe are your symptoms?",
+    "severityPlaceholder": "Select severity level",
+    "severityMild": "Mild - Symptoms are noticeable but do not interfere with daily activities",
+    "severityModerate": "Moderate - Symptoms interfere with some daily activities",
+    "severitySevere": "Severe - Symptoms significantly impact daily life or require immediate attention",
+    "duration": "Duration",
+    "durationLabel": "How long have you had these symptoms?",
+    "durationPlaceholder": "e.g., 2 days, 1 week, 3 months",
+    "additionalNotes": "Additional Notes",
+    "additionalNotesLabel": "Additional Notes (optional)",
+    "additionalNotesPlaceholder": "Any other relevant information (medications, allergies, recent events, etc.)",
+    "uploadImage": "Upload Image (optional)",
+    "uploadImageLabel": "Upload Image (optional)",
+    "takePhoto": "Take Photo",
+    "analyze": "Analyze Symptoms",
+    "analyzing": "Analyzing..."
+  },
+    "analyzing": {
+      "title": "Analyzing Your Symptoms",
+      "description": "Our AI is analyzing your symptoms to provide recommendations"
+    },
+    "disclaimer": {
+      "title": "Medical Disclaimer",
+      "description": "This tool provides general recommendations based on your symptoms. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider for medical concerns."
+    },
+    "results": {
+      "successMessage": "Analysis complete! Here are our recommendations based on your symptoms.",
+      "symptomSummary": "Symptom Summary",
+      "yourSymptoms": "Your Symptoms",
+      "description": "Description",
+      "severity": "Severity",
+      "duration": "Duration",
+      "aiAnalysis": "AI Analysis Results",
+      "analysis": "Analysis",
+      "confidence": "Confidence",
+      "urgency": "Urgency",
+      "recommendedSpecialty": "Recommended Specialty",
+      "recommendations": "Recommendations",
+      "possibleConditions": "Possible Conditions",
+      "rawResponse": "Raw Gemini API Response",
+      "recommendedDoctor": "Recommended Healthcare Professional",
+      "additionalRecommendations": "Additional Recommendations",
+      "unableToParse": "Unable to parse response"
+    },
+    "actions": {
+      "analyzeDifferent": "Analyze Different Symptoms",
+      "browseClinics": "Browse All Clinics"
+    },
+    "error": {
+      "analysisError": "Sorry, we encountered an error analyzing your symptoms. This could be due to API connectivity issues or invalid input. Please try again or contact support if the problem persists.",
+      "tryAgain": "Try Again"
+    }
+  }
+}

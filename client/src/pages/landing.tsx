@@ -3,11 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Search, Hospital, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import type { ClinicStats } from "@/lib/types";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Landing() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [location, setLocation] = useLocation();
 
@@ -68,12 +70,10 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-responsive-xl font-bold text-gray-900 mb-6 leading-tight">
-              Stop Waiting,<br />
-              <span className="text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Start Healing</span>
+              {t('landing.title')}
             </h2>
             <p className="text-responsive text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Find nearby clinics, view real-time wait times, and join queues digitally.
-              Make healthcare visits predictable and stress-free.
+              {t('landing.subtitle')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -84,7 +84,7 @@ export default function Landing() {
                   data-testid="button-login-landing"
                 >
                   <LogIn className="h-5 w-5 mr-2" />
-                  Login
+                  {t('landing.login')}
                 </Button>
               </Link>
               <Link href="/auth">
@@ -95,7 +95,7 @@ export default function Landing() {
                   data-testid="button-signup-landing"
                 >
                   <UserPlus className="h-5 w-5 mr-2" />
-                  Sign Up
+                  {t('landing.signup')}
                 </Button>
               </Link>
             </div>
@@ -116,19 +116,19 @@ export default function Landing() {
                   <div className="text-2xl font-bold text-primary animate-scale-in" data-testid="stat-clinics">
                     {stats?.clinicsConnected || 0}+
                   </div>
-                  <div className="text-sm text-gray-600">Clinics Connected</div>
+                  <div className="text-sm text-gray-600">{t('landing.clinicsConnected')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-success animate-scale-in" style={{ animationDelay: '0.1s' }} data-testid="stat-time-saved">
                     {stats?.avgTimeSaved || "0 min"}
                   </div>
-                  <div className="text-sm text-gray-600">Avg. Time Saved</div>
+                  <div className="text-sm text-gray-600">{t('landing.avgTimeSaved')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-secondary animate-scale-in" style={{ animationDelay: '0.2s' }} data-testid="stat-patients">
                     {stats?.patientsServed || 0}+
                   </div>
-                  <div className="text-sm text-gray-600">Patients Served</div>
+                  <div className="text-sm text-gray-600">{t('landing.patientsServed')}</div>
                 </div>
               </div>
             </div>

@@ -2,30 +2,33 @@ import { Goal, Eye, Heart, Users, Award, Lightbulb, Target } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card";
 import TeamMember from "@/components/ui/team-member";
 import type { TeamMember as TeamMemberType } from "@/lib/types";
+import { useTranslation } from "react-i18next";
 import yashodhanPhoto from "@/images/yash.jpeg";
 import kaiPhoto from "@/images/Kai.jpeg";
 import swaraPhoto from "@/images/swara.jpeg";
 import abo from "@/images/abo.jpg";
 
 export default function About() {
+  const { t } = useTranslation();
+
   const teamMembers: TeamMemberType[] = [
     {
-      name: "Yashodhan Rajapkar",
-      role: "Founder & Lead Developer",
+      name: t('team.yashodhan.name'),
+      role: t('team.yashodhan.role'),
       image: yashodhanPhoto,
-      bio: "Innovative founder and lead developer with a passion for creating impactful technology solutions."
+      bio: t('team.yashodhan.bio')
     },
     {
-      name: "Kaivalya Gharat",
-      role: "Co-Founder & Developer",
+      name: t('team.kaivalya.name'),
+      role: t('team.kaivalya.role'),
       image: kaiPhoto,
-      bio: "Creative co-founder and developer dedicated to building user-friendly applications that solve real-world problems."
+      bio: t('team.kaivalya.bio')
     },
     {
-      name: "Swarali Mahishi",
-      role: "Co-Founder & Developer",
+      name: t('team.swarali.name'),
+      role: t('team.swarali.role'),
       image: swaraPhoto,
-      bio: "Dedicated co-founder and developer focused on developing accessible and inclusive technology for everyone."
+      bio: t('team.swarali.bio')
     },
   ];
 
@@ -57,11 +60,10 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              About Find My Clinic
+              {t('about.title')}
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Our mission is to create a more efficient, accessible, and organized local healthcare network
-              for the entire community through innovative technology solutions.
+              {t('about.subtitle')}
             </p>
           </div>
         </div>
@@ -72,9 +74,9 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Meet Our Team</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('team.title')}</h2>
               <p className="text-xl text-gray-600">
-                Passionate healthcare technology innovators working to transform clinic experiences
+                {t('team.subtitle')}
               </p>
             </div>
 
@@ -102,11 +104,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-6">
                     <Goal className="text-white h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Our Mission</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.mission.title')}</h3>
                   <p className="text-gray-600">
-                    To eliminate the frustration of uncertain wait times in healthcare by providing
-                    real-time, accessible technology that connects patients with clinics efficiently
-                    and compassionately.
+                    {t('about.mission.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -116,11 +116,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-6">
                     <Eye className="text-white h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Our Vision</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.vision.title')}</h3>
                   <p className="text-gray-600">
-                    To create a comprehensive healthcare ecosystem where every clinic visit is
-                    predictable, every patient is informed, and healthcare providers can focus
-                    on what they do best—caring for people.
+                    {t('about.vision.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -134,9 +132,9 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Values</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('about.values.title')}</h2>
               <p className="text-xl text-gray-600">
-                The principles that guide our work and shape our platform
+                {t('about.values.subtitle')}
               </p>
             </div>
 
@@ -146,10 +144,9 @@ export default function About() {
                   <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <Users className="text-white h-8 w-8" />
                   </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-4">Accessibility</h4>
+                  <h4 className="text-xl font-bold text-gray-900 mb-4">{t('about.values.accessibility.title')}</h4>
                   <p className="text-gray-600">
-                    Healthcare technology should be inclusive and accessible to everyone,
-                    regardless of their technical comfort level or infrastructure.
+                    {t('about.values.accessibility.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -159,10 +156,9 @@ export default function About() {
                   <div className="w-16 h-16 bg-gradient-to-br from-secondary to-success rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <Heart className="text-white h-8 w-8" />
                   </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-4">Empathy</h4>
+                  <h4 className="text-xl font-bold text-gray-900 mb-4">{t('about.values.empathy.title')}</h4>
                   <p className="text-gray-600">
-                    We understand the stress and uncertainty of seeking healthcare,
-                    and we design with compassion for both patients and providers.
+                    {t('about.values.empathy.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -172,10 +168,9 @@ export default function About() {
                   <div className="w-16 h-16 bg-gradient-to-br from-success to-accent rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <Goal className="text-white h-8 w-8" />
                   </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-4">Innovation</h4>
+                  <h4 className="text-xl font-bold text-gray-900 mb-4">{t('about.values.innovation.title')}</h4>
                   <p className="text-gray-600">
-                    We continuously innovate to solve real healthcare challenges
-                    with practical, user-friendly technology solutions.
+                    {t('about.values.innovation.description')}
                   </p>
                 </CardContent>
               </Card>
@@ -189,30 +184,21 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('about.story.title')}</h2>
             </div>
 
             <Card className="p-8 md:p-12 shadow-lg">
               <CardContent className="prose prose-lg max-w-none">
                 <p className="text-gray-600 mb-6">
-                  Find My Clinic was born from a simple observation: healthcare visits don't have to be
-                  unpredictable and stressful. Our founders experienced firsthand the frustration of
-                  long, uncertain waits at clinics and witnessed the burnout affecting healthcare staff
-                  managing chaotic queues.
+                  {t('about.story.paragraph1')}
                 </p>
 
                 <p className="text-gray-600 mb-6">
-                  We realized that the gap wasn't in medical expertise—it was in information flow.
-                  Patients needed to know when to arrive, and clinics needed tools to manage their
-                  patient flow efficiently. This insight led to the creation of our platform that
-                  bridges this information gap with real-time queue management.
+                  {t('about.story.paragraph2')}
                 </p>
 
                 <p className="text-gray-600">
-                  Today, Find My Clinic serves as a comprehensive solution that not only reduces wait
-                  times and stress for patients but also alleviates administrative burden for healthcare
-                  providers. We're proud to be building technology that makes healthcare more human
-                  and accessible for everyone.
+                  {t('about.story.paragraph3')}
                 </p>
               </CardContent>
             </Card>

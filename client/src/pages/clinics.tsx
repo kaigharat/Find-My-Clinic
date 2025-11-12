@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Hospital, Users, TrendingUp, MessageSquare, Play, CheckCircle, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,15 +14,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertContactRequestSchema } from "@shared/schema";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { getTranslatedName, getTranslatedAddress } from "@/lib/utils";
 import { z } from "zod";
 import CL from "@/images/CL.jpg";
 
 const clinicContactSchema = insertContactRequestSchema.extend({
   type: z.literal("clinic_demo"),
-  clinicName: z.string().min(1, "Clinic name is required"),
+  clinic_name: z.string().min(1, "Clinic name is required"),
 });
 
 export default function Clinics() {
+  const { t, i18n } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
   const [, navigate] = useLocation();
@@ -78,7 +81,7 @@ export default function Clinics() {
       email: "",
       phone: "",
       message: "",
-      clinicName: "",
+      clinic_name: "",
     },
   });
 
@@ -97,14 +100,15 @@ export default function Clinics() {
       setIsDialogOpen(false);
       form.reset();
       toast({
-        title: "Demo Request Submitted!",
-        description: "We'll get back to you within 24 hours to schedule your personalized demo.",
+        title: t('clinics.demoDialog.requestReceived'),
+        description: t('clinics.demoDialog.receivedDetails'),
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Demo request submission error:', error);
       toast({
-        title: "Error",
-        description: "Failed to submit demo request. Please try again.",
+        title: t('clinics.demoDialog.error'),
+        description: t('clinics.demoDialog.failedSubmit'),
         variant: "destructive",
       });
     },
@@ -145,8 +149,8 @@ export default function Clinics() {
       if (error) throw error;
 
       toast({
-        title: "Appointment Booked!",
-        description: `Your token number is ${token.token_number}. Estimated wait time: ${token.estimated_wait_time} minutes. Check your dashboard for status updates.`,
+        title: t('clinics.bookingDialog.appointmentBooked'),
+        description: `${t('clinics.bookingDialog.tokenNumber')} ${token.token_number}. ${t('clinics.bookingDialog.estimatedWait')} ${token.estimated_wait_time} ${t('clinics.bookingDialog.minutes')}. ${t('clinics.bookingDialog.checkDashboard')}`,
       });
 
       // Store token in localStorage for dashboard access
@@ -165,8 +169,8 @@ export default function Clinics() {
     } catch (error) {
       console.error('Booking error:', error);
       toast({
-        title: "Booking Failed",
-        description: "Unable to book appointment. Please try again.",
+        title: t('clinics.bookingDialog.bookingFailed'),
+        description: t('clinics.bookingDialog.unableToBook'),
         variant: "destructive",
       });
     }
@@ -175,43 +179,43 @@ export default function Clinics() {
   const benefits = [
     {
       icon: TrendingUp,
-      title: "Efficient Digital Management",
-      description: "Simple admin panel or WhatsApp bot integration for seamless queue management without complex training.",
+      title: t('clinics.benefits.efficientManagement.title'),
+      description: t('clinics.benefits.efficientManagement.description'),
       color: "bg-primary",
     },
     {
       icon: Users,
-      title: "Reduced Staff Burnout",
-      description: "Eliminate manual queue management stress and reduce administrative chaos with automated patient flow.",
+      title: t('clinics.benefits.reducedBurnout.title'),
+      description: t('clinics.benefits.reducedBurnout.description'),
       color: "bg-success",
     },
     {
       icon: MessageSquare,
-      title: "Better Resource Allocation",
-      description: "Optimize staff scheduling and improve operational efficiency with predictive patient flow data.",
+      title: t('clinics.benefits.betterAllocation.title'),
+      description: t('clinics.benefits.betterAllocation.description'),
       color: "bg-secondary",
     },
   ];
 
   const features = [
     {
-      title: "WhatsApp Integration",
-      description: "Manage queues directly through WhatsApp - no additional training required.",
+      title: t('clinics.features.whatsappIntegration.title'),
+      description: t('clinics.features.whatsappIntegration.description'),
       checked: true,
     },
     {
-      title: "Real-time Updates",
-      description: "Automatic patient notifications and wait time adjustments.",
+      title: t('clinics.features.realTimeUpdates.title'),
+      description: t('clinics.features.realTimeUpdates.description'),
       checked: true,
     },
     {
-      title: "Analytics Dashboard",
-      description: "Track patient flow patterns and optimize your clinic operations.",
+      title: t('clinics.features.analyticsDashboard.title'),
+      description: t('clinics.features.analyticsDashboard.description'),
       checked: true,
     },
     {
-      title: "QR Code System",
-      description: "Provide a public QR for discovery and scan patients' personal QR codes for secure, instant check-in.",
+      title: t('clinics.features.qrCodeSystem.title'),
+      description: t('clinics.features.qrCodeSystem.description'),
       checked: true,
     },
   ];
@@ -245,10 +249,10 @@ export default function Clinics() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Transform Your Clinic Operations
+                {t('clinics.hero.title')}
               </h1>
               <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                Reduce administrative burden and improve patient satisfaction with our intelligent queue management system
+                {t('clinics.hero.subtitle')}
               </p>
               
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -279,7 +283,7 @@ export default function Clinics() {
                       />
                       <FormField
                         control={form.control}
-                        name="clinicName"
+                        name="clinic_name"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Clinic Name</FormLabel>
@@ -396,8 +400,8 @@ export default function Clinics() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Everything You Need to Get Started</h2>
-              <p className="text-xl text-gray-600">Our platform is designed for easy adoption with minimal training required</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('clinics.features.title')}</h2>
+              <p className="text-xl text-gray-600">{t('clinics.features.subtitle')}</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -457,8 +461,8 @@ export default function Clinics() {
                 <div className="space-y-2 text-sm text-blue-800">
                   <p><strong>Doctor:</strong> {bookingDoctor.name}</p>
                   <p><strong>Specialty:</strong> {bookingDoctor.specialization}</p>
-                  <p><strong>Clinic:</strong> {bookingClinic.name}</p>
-                  <p><strong>Address:</strong> {bookingClinic.address}</p>
+                  <p><strong>Clinic:</strong> {getTranslatedName(bookingClinic, i18n)}</p>
+                  <p><strong>Address:</strong> {getTranslatedAddress(bookingClinic, i18n)}</p>
                   <p><strong>Phone:</strong> {bookingClinic.phone}</p>
                 </div>
               </div>
