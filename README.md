@@ -8,7 +8,7 @@ Find My Clinic is a smart healthcare web application that helps users easily dis
 🚀 Live Demo
 
 🔗 Website: https://find-my-clinic.netlify.app
-🎥 YouTube Demo: (Add your link here)
+🎥 YouTube Demo: https://youtu.be/IDnjF46rpZM?si=hHa-hWXYJF_tUoiz
 
 
 ---
