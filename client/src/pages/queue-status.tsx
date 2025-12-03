@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,23 +21,34 @@ interface QueueToken {
     address: string;
     phone: string;
   };
-  doctor: {
-    name: string;
-    specialization: string;
-  };
 }
 
 export default function QueueStatus() {
   const { t } = useTranslation();
   const [, navigate] = useLocation();
+  const search = useSearch();
   const { toast } = useToast();
   const [tokenNumber, setTokenNumber] = useState("");
   const [queueToken, setQueueToken] = useState<QueueToken | null>(null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
 
-  const handleSearch = async () => {
-    if (!tokenNumber.trim()) {
+  // Handle token parameter from URL
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const tokenParam = params.get('token');
+    if (tokenParam && !tokenNumber) {
+      setTokenNumber(tokenParam);
+      // Auto-search if token is provided in URL
+      setTimeout(() => {
+        handleSearch(tokenParam);
+      }, 100);
+    }
+  }, [search]);
+
+  const handleSearch = async (overrideToken?: string) => {
+    const tokenToSearch = overrideToken || tokenNumber;
+    if (!tokenToSearch.trim()) {
       toast({
         title: t("queueStatus.tokenRequired"),
         description: t("queueStatus.enterTokenNumber"),
@@ -63,13 +74,9 @@ export default function QueueStatus() {
           ),
           patient:patients (
             id
-          ),
-          doctor:doctors (
-            name,
-            specialization
           )
         `)
-        .eq('token_number', parseInt(tokenNumber))
+        .eq('token_number', parseInt(tokenToSearch))
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
@@ -84,8 +91,7 @@ export default function QueueStatus() {
       } else {
         setQueueToken({
           ...data,
-          clinic: data.clinic[0],
-          doctor: data.doctor[0]
+          clinic: data.clinic[0]
         });
       }
 
@@ -100,6 +106,10 @@ export default function QueueStatus() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleButtonClick = () => {
+    handleSearch();
   };
 
   const getStatusColor = (status: string) => {
@@ -158,7 +168,7 @@ export default function QueueStatus() {
                 />
               </div>
               <Button
-                onClick={handleSearch}
+                onClick={handleButtonClick}
                 disabled={loading}
                 className="w-full"
               >
@@ -201,7 +211,7 @@ export default function QueueStatus() {
                   </div>
 
                   {/* Clinic Info */}
-                  <div className="grid md:grid-cols-2 gap-4">
+                  {queueToken.clinic && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-gray-500" />
@@ -213,18 +223,7 @@ export default function QueueStatus() {
                         <p className="text-sm text-gray-600">{queueToken.clinic.phone}</p>
                       </div>
                     </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-500" />
-                        <span className="font-medium">{t("queueStatus.doctor")}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">{queueToken.doctor.name}</p>
-                        <p className="text-sm text-gray-600">{queueToken.doctor.specialization}</p>
-                      </div>
-                    </div>
-                  </div>
+                  )}
 
                   {/* Wait Time */}
                   {queueToken.status === 'waiting' && queueToken.estimated_wait_time && (

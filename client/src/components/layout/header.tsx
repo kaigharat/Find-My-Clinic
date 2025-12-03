@@ -94,6 +94,7 @@ export default function Header() {
       return [
         { name: t('nav.home'), href: "/" },
         { name: t('nav.findClinics'), href: "/patients" },
+        { name: t('nav.doctors'), href: "/doctors" },
         { name: t('nav.symptomAnalysis'), href: "/symptom-analysis" },
         { name: t('nav.myProfile'), href: "/profile" },
         //{ name: "Dashboard", href: "/dashboard" },
@@ -214,7 +215,7 @@ export default function Header() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "text-gray-900 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 font-medium px-3 py-2 rounded-lg",
+                    "text-gray-900 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 font-medium px- py-2 rounded-lg",
                     location === item.href && "text-blue-600 font-semibold bg-blue-100"
                   )}
                   data-testid={`nav-${item.name.toLowerCase().replace(' ', '-')}`}

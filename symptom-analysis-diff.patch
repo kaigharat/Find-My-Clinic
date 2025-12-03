@@ -1,0 +1,226 @@
+=======
+import { useState } from "react";
+>>>>>>> REPLACE
+
+<<<<<<< SEARCH
+  const [currentStep, setCurrentStep] = useState<"input" | "analyzing" | "results">("input");
+  const [symptomData, setSymptomData] = useState<Symptom | null>(null);
+  const [analysisData, setAnalysisData] = useState<SymptomAnalysis | null>(null);
+  const [rawGeminiResponse, setRawGeminiResponse] = useState<string>("");
+=======
+  const [currentStep, setCurrentStep] = useState<"input" | "analyzing" | "results">("input");
+  const [symptomData, setSymptomData] = useState<Symptom | null>(null);
+  const [analysisData, setAnalysisData] = useState<SymptomAnalysis | null>(null);
+  const [rawGeminiResponse, setRawGeminiResponse] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+>>>>>>> REPLACE
+
+<<<<<<< SEARCH
+  const submitSymptomMutation = useMutation({
+    mutationFn: async (data: {
+      description: string;
+      severity: string;
+      duration?: string;
+      image?: File;
+      additionalNotes?: string;
+    }) => {
+      // Create symptom record
+      const { data: symptom, error: symptomError } = await supabase
+        .from('symptoms')
+        .insert([{
+          description: data.description,
+          severity: data.severity,
+          duration: data.duration,
+          additional_notes: data.additionalNotes,
+        }])
+        .select()
+        .single();
+
+      if (symptomError) throw symptomError;
+
+      // Call Gemini API for analysis
+      const geminiResult = await analyzeSymptomsWithGemini(
+        data.description,
+        data.severity,
+        data.duration,
+        data.additionalNotes,
+        data.image
+      );
+
+      console.log('Gemini analysis result:', geminiResult);
+
+      // Store raw Gemini response for UI display
+      setRawGeminiResponse(geminiResult.rawResponse || '');
+
+      // Create analysis record with Gemini results
+      const analysisDataToInsert = {
+        id: crypto.randomUUID(),
+        symptom_id: symptom.id,
+        analysis_result: geminiResult.analysis,
+        confidence: geminiResult.confidence,
+        urgency: geminiResult.urgency,
+        recommendations: geminiResult.recommendations,
+        possible_conditions: geminiResult.possibleConditions,
+        recommended_specialty: geminiResult.recommendedSpecialty,
+        created_at: new Date().toISOString(),
+      };
+
+      const { data: analysis, error: analysisError } = await supabase
+        .from('symptom_analyses')
+        .insert([analysisDataToInsert])
+        .select()
+        .single();
+
+      if (analysisError) throw analysisError;
+
+      // Convert snake_case keys from DB to camelCase for UI usage
+      const normalizedAnalysis = snakeToCamel(analysis);
+
+      setAnalysisData(normalizedAnalysis);
+
+      return { symptom, analysis: normalizedAnalysis };
+    },
+    onSuccess: () => {
+      setCurrentStep("results");
+    },
+    onError: (error) => {
+      console.error('Symptom analysis error:', error);
+      setCurrentStep("input");
+    },
+  });
+=======
+  const submitSymptomMutation = useMutation({
+    mutationFn: async (data: {
+      description: string;
+      severity: string;
+      duration?: string;
+      image?: File;
+      additionalNotes?: string;
+    }) => {
+      try {
+        // Create symptom record
+        const { data: symptom, error: symptomError } = await supabase
+          .from('symptoms')
+          .insert([{
+            description: data.description,
+            severity: data.severity,
+            duration: data.duration,
+            additional_notes: data.additionalNotes,
+          }])
+          .select()
+          .single();
+
+        if (symptomError) throw symptomError;
+
+        setSymptomData(symptom);
+
+        // Call Gemini API for analysis
+        const geminiResult = await analyzeSymptomsWithGemini(
+          data.description,
+          data.severity,
+          data.duration,
+          data.additionalNotes,
+          data.image
+        );
+
+        console.log('Gemini analysis result:', geminiResult);
+
+        // Store raw Gemini response for UI display
+        setRawGeminiResponse(geminiResult.rawResponse || '');
+
+        // Create analysis record with Gemini results
+        const analysisDataToInsert = {
+          id: crypto.randomUUID(),
+          symptom_id: symptom.id,
+          analysis_result: geminiResult.analysis,
+          confidence: geminiResult.confidence,
+          urgency: geminiResult.urgency,
+          recommendations: geminiResult.recommendations,
+          possible_conditions: geminiResult.possibleConditions,
+          recommended_specialty: geminiResult.recommendedSpecialty,
+          created_at: new Date().toISOString(),
+        };
+
+        const { data: analysis, error: analysisError } = await supabase
+          .from('symptom_analyses')
+          .insert([analysisDataToInsert])
+          .select()
+          .single();
+
+        if (analysisError) throw analysisError;
+
+        // Convert snake_case keys from DB to camelCase for UI usage
+        const normalizedAnalysis = snakeToCamel(analysis);
+
+        setAnalysisData(normalizedAnalysis);
+
+        return { symptom, analysis: normalizedAnalysis };
+      } catch (error: any) {
+        console.error('Symptom analysis error:', error);
+        // Set user-friendly error message based on error type
+        if (error.message.includes('API key')) {
+          setErrorMessage(t('symptomAnalysis.error.apiKeyError') || 'API key configuration error. Please contact support.');
+        } else if (error.message.includes('Network error') || error.message.includes('fetch')) {
+          setErrorMessage(t('symptomAnalysis.error.networkError') || 'Network error. Please check your connection and try again.');
+        } else {
+          setErrorMessage(error.message || t('symptomAnalysis.error.analysisError') || 'An unknown error occurred.');
+        }
+        // Reset currentStep to input to stop loading
+        setCurrentStep("input");
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      setErrorMessage("");
+      setCurrentStep("results");
+    },
+    onError: () => {
+      // Error handling done in mutationFn catch
+    },
+  });
+>>>>>>> REPLACE
+
+<<<<<<< SEARCH
+            <SymptomInput
+              onSubmit={handleSymptomSubmit}
+              isLoading={submitSymptomMutation.isPending}
+            />
+
+            {/* Disclaimer */}
+            <div className="mt-6">
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  {t('symptomAnalysis.disclaimer.description')}
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        )}
+=======
+            <SymptomInput
+              onSubmit={handleSymptomSubmit}
+              isLoading={submitSymptomMutation.isPending}
+            />
+
+            {/* Show error message */}
+            {errorMessage && (
+              <div className="mt-4">
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              </div>
+            )}
+
+            {/* Disclaimer */}
+            <div className="mt-6">
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  {t('symptomAnalysis.disclaimer.description')}
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        )}

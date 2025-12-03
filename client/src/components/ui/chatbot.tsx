@@ -52,7 +52,7 @@ export default function Chatbot() {
 
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash-exp',
+    model: 'gemini-2.0-flash',
     safetySettings: [
       {
         category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -90,8 +90,8 @@ export default function Chatbot() {
     try {
       const currentLanguage = i18n.language;
       const languageInstruction = currentLanguage === 'hi' ? 'Please respond in Hindi (Devanagari script).' :
-                                  currentLanguage === 'mr' ? 'Please respond in Marathi (Devanagari script).' :
-                                  'Please respond in English.';
+        currentLanguage === 'mr' ? 'Please respond in Marathi (Devanagari script).' :
+          'Please respond in English.';
 
       const prompt = `You are a helpful healthcare assistant chatbot for Find My Clinic. You provide general health information, answer questions about symptoms, and help users find appropriate medical care. Always be empathetic, informative, and remind users that you're not a substitute for professional medical advice.
 
@@ -195,9 +195,8 @@ Please provide a helpful, accurate response. If the question involves serious sy
                   {messages.map((message) => (
                     <div
                       key={message.id}
-                      className={`flex gap-3 ${
-                        message.sender === 'user' ? 'justify-end' : 'justify-start'
-                      }`}
+                      className={`flex gap-3 ${message.sender === 'user' ? 'justify-end' : 'justify-start'
+                        }`}
                     >
                       {message.sender === 'bot' && (
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -205,11 +204,10 @@ Please provide a helpful, accurate response. If the question involves serious sy
                         </div>
                       )}
                       <div
-                        className={`max-w-[85%] rounded-lg px-3 py-2 ${
-                          message.sender === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
-                        }`}
+                        className={`max-w-[85%] rounded-lg px-3 py-2 ${message.sender === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                          }`}
                       >
                         <p className="text-sm whitespace-pre-wrap break-words overflow-wrap-anywhere">{message.content}</p>
                         <p className="text-xs opacity-70 mt-1">

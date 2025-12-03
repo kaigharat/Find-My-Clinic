@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   medications TEXT,
   insurance_provider TEXT,
   insurance_number TEXT,
+  profile_picture TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id)

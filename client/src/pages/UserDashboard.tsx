@@ -27,6 +27,7 @@ interface QueueToken {
   clinic: {
     name: string;
     address: string;
+    phone: string;
   };
 }
 
@@ -43,6 +44,7 @@ interface UserProfile {
   medications: string;
   insuranceProvider: string;
   insuranceNumber: string;
+  profilePicture: string;
 }
 
 export default function UserDashboard() {
@@ -64,51 +66,55 @@ export default function UserDashboard() {
     medicalConditions: '',
     medications: '',
     insuranceProvider: '',
-    insuranceNumber: ''
+    insuranceNumber: '',
+    profilePicture: ''
   });
   const [saving, setSaving] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [profileComplete, setProfileComplete] = useState(false);
+  const [hasUserTokens, setHasUserTokens] = useState(() => JSON.parse(localStorage.getItem('userTokens') || '[]').length > 0);
 
-
-
-  useEffect(() => {
-    if (user && userRole === 'patient') {
-      fetchUserVisits();
-      fetchUserProfile();
-      fetchQueueTokens();
-    }
-  }, [user, userRole]);
-
-  useEffect(() => {
-    if (profileComplete && user?.id) {
-      generateQRCode();
-    }
-  }, [profileComplete, user?.id]);
-
-  const fetchUserVisits = async () => {
+  const fetchJoinedQueues = async () => {
     try {
-      // This would need to be implemented based on your schema
-      // For now, showing mock data
-      const mockVisits: ClinicVisit[] = [
-        {
-          id: '1',
-          clinic_name: 'City Medical Center',
-          visit_date: '2024-01-15',
-          status: 'completed',
-          location: 'Downtown'
-        },
-        {
-          id: '2',
-          clinic_name: 'Wellness Clinic',
-          visit_date: '2024-01-10',
-          status: 'completed',
-          location: 'Midtown'
-        }
-      ];
-      setVisits(mockVisits);
+      if (!user) {
+        setVisits([]);
+        return;
+      }
+
+      // Fetch all queue tokens for the authenticated user
+      const { data, error } = await supabase
+        .from('queue_tokens')
+        .select(`
+          id,
+          status,
+          created_at,
+          clinic:clinics (
+            name,
+            address
+          )
+        `)
+        .in('status', ['waiting', 'called', 'completed'])
+        .eq('patient_id', user.id) // Assuming patient_id is linked to user.id
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Format the data to match ClinicVisit interface
+      const formattedQueues: ClinicVisit[] = (data || []).map(token => {
+        const clinic = Array.isArray(token.clinic) ? token.clinic[0] : token.clinic;
+        return {
+          id: token.id,
+          clinic_name: clinic?.name || 'Unknown Clinic',
+          visit_date: token.created_at,
+          status: token.status,
+          location: clinic?.address || 'Unknown Location'
+        };
+      });
+
+      setVisits(formattedQueues);
     } catch (error) {
-      console.error('Error fetching visits:', error);
+      console.error('Error fetching joined queues:', error);
+      setVisits([]);
     } finally {
       setLoading(false);
     }
@@ -116,17 +122,7 @@ export default function UserDashboard() {
 
   const fetchQueueTokens = async () => {
     try {
-      // Get user's tokens from localStorage
-      const userTokens = JSON.parse(localStorage.getItem('userTokens') || '[]');
-      const tokenNumbers = userTokens.map((token: any) => token.tokenNumber);
-
-      if (tokenNumbers.length === 0) {
-        setQueueTokens([]);
-        return;
-      }
-
-      // Fetch queue tokens that belong to the current user
-      const { data, error } = await supabase
+      let query = supabase
         .from('queue_tokens')
         .select(`
           id,
@@ -136,12 +132,34 @@ export default function UserDashboard() {
           created_at,
           clinic:clinics (
             name,
-            address
+            address,
+            phone
           )
         `)
-        .in('token_number', tokenNumbers)
-        .in('status', ['waiting', 'called']) // Include active statuses
+        .in('status', ['waiting', 'called', 'completed']) // Include active and completed statuses
         .order('created_at', { ascending: false });
+
+      if (user) {
+        // For authenticated users, fetch tokens by patient_id
+        query = query.eq('patient_id', user.id);
+      } else {
+        // For anonymous users, get tokens from localStorage
+        const userTokens = JSON.parse(localStorage.getItem('userTokens') || '[]');
+
+        if (userTokens.length === 0) {
+          setQueueTokens([]);
+          return;
+        }
+
+        // Apply OR conditions for each token combination
+        const conditions = userTokens.map((token: any) =>
+          `and(clinic_id.eq.${token.clinicId},token_number.eq.${token.tokenNumber})`
+        ).join(',');
+
+        query = query.or(conditions);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -185,7 +203,8 @@ export default function UserDashboard() {
           medicalConditions: data.medical_conditions || '',
           medications: data.medications || '',
           insuranceProvider: data.insurance_provider || '',
-          insuranceNumber: data.insurance_number || ''
+          insuranceNumber: data.insurance_number || '',
+          profilePicture: data.profile_picture || ''
         });
         const isComplete = !!(data.full_name && data.phone && data.date_of_birth);
         setProfileComplete(isComplete);
@@ -232,6 +251,59 @@ Number: ${profile.insuranceNumber || 'None'}
     }
   };
 
+  useEffect(() => {
+    if ((user && userRole === 'patient') || hasUserTokens) {
+      fetchJoinedQueues();
+      fetchUserProfile();
+      fetchQueueTokens();
+    }
+  }, [user, userRole, hasUserTokens]);
+
+  useEffect(() => {
+    if (profileComplete && user?.id) {
+      generateQRCode();
+    }
+  }, [profileComplete, user?.id]);
+
+  useEffect(() => {
+    if (userRole !== 'patient' && !hasUserTokens) return;
+
+    // Set up real-time subscription for queue tokens
+    const channel = supabase
+      .channel('queue_tokens_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'queue_tokens',
+        },
+    (payload) => {
+      console.log('Queue token change detected:', payload);
+      fetchQueueTokens();
+      if (user) {
+        fetchJoinedQueues();
+      }
+    }
+      )
+      .subscribe();
+
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, userRole, hasUserTokens]);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setHasUserTokens(JSON.parse(localStorage.getItem('userTokens') || '[]').length > 0);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -254,6 +326,7 @@ Number: ${profile.insuranceNumber || 'None'}
           medications: profile.medications,
           insurance_provider: profile.insuranceProvider,
           insurance_number: profile.insuranceNumber,
+          profile_picture: profile.profilePicture,
           updated_at: new Date().toISOString()
         });
 
@@ -303,7 +376,7 @@ Number: ${profile.insuranceNumber || 'None'}
 
 
 
-  if (userRole !== 'patient') {
+  if (userRole !== 'patient' && !hasUserTokens) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -341,14 +414,37 @@ Number: ${profile.insuranceNumber || 'None'}
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
-              <p className="text-gray-600">{t('dashboard.welcome', { name: user?.user_metadata?.name || t('dashboard.welcome') })}</p>
+            <div className="flex items-center gap-4">
+              {profile.profilePicture && (
+                <img
+                  src={profile.profilePicture}
+                  alt="Profile Picture"
+                  className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+                />
+              )}
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+                <p className="text-gray-600">{t('dashboard.welcome', { name: profile.fullName || user?.user_metadata?.name || t('dashboard.welcome') })}</p>
+              </div>
             </div>
-            <Button variant="outline" onClick={() => setLocation('/profile')}>
-              <Settings className="h-4 w-4 mr-2" />
-              {t('dashboard.editProfile')}
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" onClick={() => setLocation('/')}>
+                <Calendar className="h-4 w-4 mr-2" />
+                {t('nav.home')}
+              </Button>
+              <Button variant="outline" onClick={() => setLocation('/patients')}>
+                <MapPin className="h-4 w-4 mr-2" />
+                {t('nav.findClinics')}
+              </Button>
+              <Button variant="outline" onClick={() => setLocation('/doctors')}>
+                <User className="h-4 w-4 mr-2" />
+                {t('nav.doctors')}
+              </Button>
+              <Button variant="outline" onClick={() => setLocation('/profile')}>
+                <Settings className="h-4 w-4 mr-2" />
+                {t('nav.myProfile')}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -428,36 +524,93 @@ Number: ${profile.insuranceNumber || 'None'}
                   <p className="text-xs">{t('dashboard.features.myAppointments.bookAppointment')}</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {queueTokens.map((token) => (
-                    <div key={token.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Ticket className="h-4 w-4 text-primary" />
+                    <div key={token.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                      {/* Token Header */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <Ticket className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">{t('dashboard.features.myAppointments.token', { number: token.token_number })}</h4>
+                            <p className="text-sm text-gray-500">Issued on {new Date(token.created_at).toLocaleDateString()}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-medium text-sm text-gray-900">{t('dashboard.features.myAppointments.token', { number: token.token_number })}</h4>
-                          <p className="text-xs text-gray-500">{token.clinic.name}</p>
-                          <p className="text-xs text-gray-400">{t('dashboard.features.myAppointments.generalQueue')}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <Badge variant={token.status === 'waiting' ? 'default' : 'secondary'} className="text-xs">
-                          {token.status}
+                        <Badge variant={token.status === 'waiting' ? 'default' : token.status === 'called' ? 'secondary' : 'outline'} className="text-xs">
+                          {token.status.charAt(0).toUpperCase() + token.status.slice(1)}
                         </Badge>
-                        {token.estimated_wait_time && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            ~{token.estimated_wait_time} min
+                      </div>
+
+                      {/* Clinic Info */}
+                      {token.clinic && (
+                        <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-2 mb-1">
+                            <MapPin className="h-4 w-4 text-gray-500" />
+                            <span className="font-medium text-sm text-gray-900">{token.clinic.name}</span>
+                          </div>
+                          <p className="text-sm text-gray-600 ml-6">{token.clinic.address}</p>
+                          {token.clinic.phone && (
+                            <p className="text-sm text-gray-600 ml-6">{token.clinic.phone}</p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Wait Time */}
+                      {token.status === 'waiting' && token.estimated_wait_time && (
+                        <div className="mb-3 p-3 bg-yellow-50 rounded-lg">
+                          <div className="flex items-center gap-2 text-yellow-800 mb-1">
+                            <Clock className="h-4 w-4" />
+                            <span className="font-medium text-sm">Estimated Wait Time</span>
+                          </div>
+                          <p className="text-yellow-700 text-sm">
+                            Approximately {token.estimated_wait_time} minutes
                           </p>
-                        )}
-                        <p className="text-xs text-gray-400 mt-1">
-                          {new Date(token.created_at).toLocaleDateString()}
-                        </p>
+                          <p className="text-yellow-600 text-xs mt-1">
+                            Please arrive at the clinic on time. You will be called when it's your turn.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Status Messages */}
+                      {token.status === 'called' && (
+                        <div className="mb-3 p-3 bg-blue-50 rounded-lg">
+                          <div className="flex items-center gap-2 text-blue-800 mb-1">
+                            <Clock className="h-4 w-4" />
+                            <span className="font-medium text-sm">Your Turn!</span>
+                          </div>
+                          <p className="text-blue-700 text-sm">
+                            Please proceed to the clinic immediately. The doctor is ready to see you.
+                          </p>
+                        </div>
+                      )}
+
+                      {token.status === 'completed' && (
+                        <div className="mb-3 p-3 bg-green-50 rounded-lg">
+                          <div className="flex items-center gap-2 text-green-800 mb-1">
+                            <Clock className="h-4 w-4" />
+                            <span className="font-medium text-sm">Visit Completed</span>
+                          </div>
+                          <p className="text-green-700 text-sm">
+                            Thank you for visiting. We hope to see you again!
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setLocation(`/queue-status?token=${token.token_number}`)}
+                        >
+                          {t('dashboard.features.myAppointments.viewStatus')}
+                        </Button>
                         {token.status === 'waiting' && (
                           <Button
                             variant="destructive"
                             size="sm"
-                            className="mt-2"
                             onClick={() => handleCancel(token.id)}
                           >
                             {t('dashboard.features.myAppointments.cancel')}
@@ -512,20 +665,34 @@ Number: ${profile.insuranceNumber || 'None'}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-6">
+                {/* Profile Picture and Basic Info Row */}
+                <div className="flex items-center gap-6">
+                  {/* Profile Picture on Left */}
+                  {profile.profilePicture && (
+                    <div className="flex-shrink-0">
+                      <img
+                        src={profile.profilePicture}
+                        alt="Profile Picture"
+                        className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+                      />
+                    </div>
+                  )}
+
+                  {/* Name and Date of Birth on Right */}
+                  <div className="flex-1 space-y-2">
+                    <div>
+                      <span className="text-lg font-semibold text-gray-900">{profile.fullName || t('dashboard.profile.notProvided')}</span>
+                    </div>
+                    <div className="text-sm">
+                      <span className="font-medium text-gray-500">{t('dashboard.profile.fields.dateOfBirth')}:</span>
+                      <p className="text-gray-900">{profile.dateOfBirth || t('dashboard.profile.notProvided')}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Details Below */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">{t('dashboard.profile.fields.fullName')}:</span>
-                    <p className="text-sm text-gray-900">{profile.fullName || t('dashboard.profile.notProvided')}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">{t('dashboard.profile.fields.phone')}:</span>
-                    <p className="text-sm text-gray-900">{profile.phone || t('dashboard.profile.notProvided')}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">{t('dashboard.profile.fields.dateOfBirth')}:</span>
-                    <p className="text-sm text-gray-900">{profile.dateOfBirth || t('dashboard.profile.notProvided')}</p>
-                  </div>
                   <div>
                     <span className="text-sm font-medium text-gray-500">{t('dashboard.profile.fields.gender')}:</span>
                     <p className="text-sm text-gray-900">{profile.gender || t('dashboard.profile.notProvided')}</p>

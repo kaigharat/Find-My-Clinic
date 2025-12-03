@@ -27,6 +27,7 @@ interface ProfileData {
   medications: string;
   insuranceProvider: string;
   insuranceNumber: string;
+  profilePicture: string;
 }
 
 export default function Profile() {
@@ -50,9 +51,11 @@ export default function Profile() {
     medicalConditions: '',
     medications: '',
     insuranceProvider: '',
-    insuranceNumber: ''
+    insuranceNumber: '',
+    profilePicture: ''
   });
 
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
 
@@ -94,7 +97,8 @@ export default function Profile() {
           medicalConditions: data.medical_conditions || '',
           medications: data.medications || '',
           insuranceProvider: data.insurance_provider || '',
-          insuranceNumber: data.insurance_number || ''
+          insuranceNumber: data.insurance_number || '',
+          profilePicture: data.profile_picture || ''
         }));
 
         // Generate QR code if profile is complete
@@ -170,6 +174,7 @@ ${t('profile.qrCode.number')}: ${data.insurance_number || t('profile.qrCode.none
             medications: profileData.medications,
             insurance_provider: profileData.insuranceProvider,
             insurance_number: profileData.insuranceNumber,
+            profile_picture: profileData.profilePicture,
             updated_at: new Date().toISOString()
           })
           .eq('user_id', user.id);
@@ -192,7 +197,8 @@ ${t('profile.qrCode.number')}: ${data.insurance_number || t('profile.qrCode.none
             medical_conditions: profileData.medicalConditions,
             medications: profileData.medications,
             insurance_provider: profileData.insuranceProvider,
-            insurance_number: profileData.insuranceNumber
+            insurance_number: profileData.insuranceNumber,
+            profile_picture: profileData.profilePicture
           });
 
         error = insertError;
@@ -343,6 +349,29 @@ ${t('profile.qrCode.number')}: ${profileData.insuranceNumber || t('profile.qrCod
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="profilePicture">{t('profile.personalInfo.profilePicture')}</Label>
+                <Input
+                  id="profilePicture"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        handleInputChange('profilePicture', e.target?.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+                {profileData.profilePicture && (
+                  <div className="mt-2">
+                    <img src={profileData.profilePicture} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

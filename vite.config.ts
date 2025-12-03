@@ -12,12 +12,12 @@ export default defineConfig(async ({ mode }) => {
       react(),
       runtimeErrorOverlay(),
       ...(process.env.NODE_ENV !== "production" &&
-      process.env.REPL_ID !== undefined
+        process.env.REPL_ID !== undefined
         ? [
-            await import("@replit/vite-plugin-cartographer").then((m) =>
-              m.cartographer(),
-            ),
-          ]
+          await import("@replit/vite-plugin-cartographer").then((m) =>
+            m.cartographer(),
+          ),
+        ]
         : []),
     ],
     resolve: {
@@ -27,6 +27,7 @@ export default defineConfig(async ({ mode }) => {
         "@assets": path.resolve(import.meta.dirname, "attached_assets"),
       },
     },
+    envDir: import.meta.dirname,
     root: path.resolve(import.meta.dirname, "client"),
     build: {
       outDir: path.resolve(import.meta.dirname, "dist/public"),
@@ -43,7 +44,7 @@ export default defineConfig(async ({ mode }) => {
       },
     },
     define: {
-      'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      // 'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
   };
 });

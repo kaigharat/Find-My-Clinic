@@ -27,6 +27,8 @@ export default function Clinics() {
   const { t, i18n } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
+  const [isConflictDialogOpen, setIsConflictDialogOpen] = useState(false);
+  const [existingAppointment, setExistingAppointment] = useState<any>(null);
   const [, navigate] = useLocation();
   const { toast } = useToast();
 
@@ -118,8 +120,47 @@ export default function Clinics() {
     submitRequestMutation.mutate(data);
   };
 
+  const checkExistingAppointment = async () => {
+    // For anonymous users, check localStorage
+    const userTokens = JSON.parse(localStorage.getItem('userTokens') || '[]');
+    if (userTokens.length > 0) {
+      // Check if any token is still active (not completed or cancelled)
+      for (const token of userTokens) {
+        try {
+          const { data, error } = await supabase
+            .from('queue_tokens')
+            .select('*, clinic:clinics(name, address)')
+            .eq('clinic_id', token.clinicId)
+            .eq('token_number', token.tokenNumber)
+            .in('status', ['waiting', 'called'])
+            .single();
+
+          if (!error && data) {
+            return data;
+          }
+        } catch (e) {
+          // Continue checking other tokens
+        }
+      }
+    }
+
+    // For authenticated users, check database
+    // Note: This clinics page doesn't have user context, so we'll handle this in doctors.tsx
+    // where we have access to the user object
+
+    return null;
+  };
+
   const handleBookAppointment = async (doctorId: string, clinicId: string) => {
     try {
+      // Check for existing active appointment
+      const existing = await checkExistingAppointment();
+      if (existing) {
+        setExistingAppointment(existing);
+        setIsConflictDialogOpen(true);
+        return;
+      }
+
       // First create an anonymous patient record
       const { data: patient, error: patientError } = await supabase
         .from('patients')
@@ -173,6 +214,46 @@ export default function Clinics() {
         description: t('clinics.bookingDialog.unableToBook'),
         variant: "destructive",
       });
+    }
+  };
+
+  const handleConflictResolution = async (action: 'cancel_previous' | 'keep_previous') => {
+    if (action === 'cancel_previous') {
+      try {
+        // Cancel the existing appointment
+        const { error } = await supabase
+          .from('queue_tokens')
+          .update({ status: 'cancelled' })
+          .eq('id', existingAppointment.id);
+
+        if (error) throw error;
+
+        // Remove from localStorage if it exists there
+        const userTokens = JSON.parse(localStorage.getItem('userTokens') || '[]');
+        const filteredTokens = userTokens.filter((token: any) =>
+          !(token.clinicId === existingAppointment.clinic_id &&
+            token.tokenNumber === existingAppointment.token_number)
+        );
+        localStorage.setItem('userTokens', JSON.stringify(filteredTokens));
+
+        // Now proceed with the new booking
+        setIsConflictDialogOpen(false);
+        setExistingAppointment(null);
+        await handleBookAppointment(bookingDoctor.id, bookingClinic.id);
+      } catch (error) {
+        console.error('Error cancelling previous appointment:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to cancel previous appointment. Please try again.',
+          variant: "destructive",
+        });
+      }
+    } else {
+      // Keep previous appointment
+      setIsConflictDialogOpen(false);
+      setExistingAppointment(null);
+      setIsBookingDialogOpen(false);
+      navigate('/clinics', { replace: true });
     }
   };
 

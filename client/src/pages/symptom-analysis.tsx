@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -7,10 +8,29 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import SymptomInput from "@/components/ui/symptom-input";
 import DoctorRecommendation from "@/components/ui/doctor-recommendation";
-import type { Symptom, SymptomAnalysis, Doctor, Clinic } from "@shared/schema";
+import type { Symptom, SymptomAnalysis as SymptomAnalysisDB, Doctor, Clinic } from "@shared/schema";
 import { supabase } from "@/lib/supabase";
 import { analyzeSymptomsWithGemini } from "@/lib/gemini";
 import AI from "@/images/AI.jpg";
+
+// Utility to convert snake_case keys to camelCase recursively
+function snakeToCamel(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(v => snakeToCamel(v));
+  } else if (obj !== null && obj.constructor === Object) {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      const camelKey = key.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+      acc[camelKey] = snakeToCamel(value);
+      return acc;
+    }, {} as any);
+  }
+  return obj;
+}
+
+// Extend DB SymptomAnalysis type to convert recommended_specialty to recommendedSpecialty etc. for UI usage
+type SymptomAnalysis = Omit<SymptomAnalysisDB, 'recommended_specialty'> & {
+  recommendedSpecialty: string | null;
+};
 
 export default function SymptomAnalysis() {
   const { t } = useTranslation();
@@ -19,6 +39,7 @@ export default function SymptomAnalysis() {
   const [symptomData, setSymptomData] = useState<Symptom | null>(null);
   const [analysisData, setAnalysisData] = useState<SymptomAnalysis | null>(null);
   const [rawGeminiResponse, setRawGeminiResponse] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Submit symptom mutation
   const submitSymptomMutation = useMutation({
@@ -29,86 +50,106 @@ export default function SymptomAnalysis() {
       image?: File;
       additionalNotes?: string;
     }) => {
-      // Create symptom record
-      const { data: symptom, error: symptomError } = await supabase
-        .from('symptoms')
-        .insert([{
-          description: data.description,
-          severity: data.severity,
-          duration: data.duration,
-          additional_notes: data.additionalNotes,
-        }])
-        .select()
-        .single();
+      try {
+        // Create symptom record
+        const { data: symptom, error: symptomError } = await supabase
+          .from('symptoms')
+          .insert([{
+            description: data.description,
+            severity: data.severity,
+            duration: data.duration,
+            additional_notes: data.additionalNotes,
+          }])
+          .select()
+          .single();
 
-      if (symptomError) throw symptomError;
-      setSymptomData(symptom);
+        if (symptomError) throw symptomError;
 
-      // Call Gemini API for analysis
-      const geminiResult = await analyzeSymptomsWithGemini(
-        data.description,
-        data.severity,
-        data.duration,
-        data.additionalNotes,
-        data.image
-      );
+        setSymptomData(symptom);
 
-      console.log('Gemini analysis result:', geminiResult);
+        // Call Gemini API for analysis
+        const geminiResult = await analyzeSymptomsWithGemini(
+          data.description,
+          data.severity,
+          data.duration,
+          data.additionalNotes,
+          data.image
+        );
 
-      // Store raw Gemini response for UI display
-      setRawGeminiResponse(geminiResult.rawResponse || '');
+        console.log('Gemini analysis result:', geminiResult);
 
-      // Create analysis record with Gemini results
-      const analysisData = {
-        id: crypto.randomUUID(),
-        symptom_id: symptom.id,
-        analysis_result: geminiResult.analysis,
-        confidence: geminiResult.confidence,
-        urgency: geminiResult.urgency,
-        recommendations: geminiResult.recommendations,
-        possible_conditions: geminiResult.possibleConditions,
-        recommended_specialty: geminiResult.recommendedSpecialty,
-        created_at: new Date().toISOString(),
-      };
+        // Store raw Gemini response for UI display
+        setRawGeminiResponse(geminiResult.rawResponse || '');
 
-      const { data: analysis, error: analysisError } = await supabase
-        .from('symptom_analyses')
-        .insert([analysisData])
-        .select()
-        .single();
+        // Create analysis record with Gemini results
+        const analysisDataToInsert = {
+          id: crypto.randomUUID(),
+          symptom_id: symptom.id,
+          analysis_result: geminiResult.analysis,
+          confidence: geminiResult.confidence,
+          urgency: geminiResult.urgency,
+          recommendations: geminiResult.recommendations,
+          possible_conditions: geminiResult.possibleConditions,
+          recommended_specialty: geminiResult.recommendedSpecialty,
+          created_at: new Date().toISOString(),
+        };
 
-      if (analysisError) throw analysisError;
-      setAnalysisData(analysis);
+        const { data: analysis, error: analysisError } = await supabase
+          .from('symptom_analyses')
+          .insert([analysisDataToInsert])
+          .select()
+          .single();
 
-      return { symptom, analysis };
+        if (analysisError) throw analysisError;
+
+        // Convert snake_case keys from DB to camelCase for UI usage
+        const normalizedAnalysis = snakeToCamel(analysis);
+
+        setAnalysisData(normalizedAnalysis);
+
+        return { symptom, analysis: normalizedAnalysis };
+      } catch (error: any) {
+        console.error('Symptom analysis error:', error);
+        // Set user-friendly error message based on error type
+        if (error.message.includes('API key')) {
+          setErrorMessage(t('symptomAnalysis.error.apiKeyError') || 'API key configuration error. Please contact support.');
+        } else if (error.message.includes('Network error') || error.message.includes('fetch')) {
+          setErrorMessage(t('symptomAnalysis.error.networkError') || 'Network error. Please check your connection and try again.');
+        } else {
+          setErrorMessage(error.message || t('symptomAnalysis.error.analysisError') || 'An unknown error occurred.');
+        }
+        // Reset currentStep to input to stop loading
+        setCurrentStep("input");
+        throw error;
+      }
     },
     onSuccess: () => {
+      setErrorMessage("");
       setCurrentStep("results");
     },
-    onError: (error) => {
-      console.error('Symptom analysis error:', error);
-      setCurrentStep("input");
+    onError: () => {
+      // Error handling done in mutationFn catch
     },
   });
 
   // Get doctor based on recommended specialty from analysis
   const { data: doctor } = useQuery({
-    queryKey: ["recommended-doctor", analysisData?.recommended_specialty],
+    queryKey: ["recommended-doctor", analysisData?.recommendedSpecialty],
     queryFn: async () => {
-      if (!analysisData?.recommended_specialty) return null;
+      if (!analysisData?.recommendedSpecialty) return null;
 
       // Get a doctor that matches the recommended specialty
       const { data, error } = await supabase
         .from('doctors')
         .select('*')
-        .eq('specialization', analysisData.recommended_specialty)
+        .eq('specialization', analysisData.recommendedSpecialty)
         .eq('is_active', true)
         .limit(1)
         .single();
 
       if (error) {
         // Fallback: Get any active doctor if no match found
-        console.log(`No doctor found for specialty ${analysisData.recommended_specialty}, getting any active doctor`);
+        console.log(`No doctor found for specialty ${analysisData.recommendedSpecialty}, getting any active doctor`);
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('doctors')
           .select('*')
@@ -124,8 +165,8 @@ export default function SymptomAnalysis() {
             email: 'sarah.johnson@example.com',
             phone: '+1-555-0123',
             clinic_id: 'mock-clinic',
-            specialization: analysisData.recommended_specialty,
-            bio: `Experienced ${analysisData.recommended_specialty.toLowerCase()} specialist with 15+ years in patient care.`,
+            specialization: analysisData.recommendedSpecialty,
+            bio: `Experienced ${analysisData.recommendedSpecialty.toLowerCase()} specialist with 15+ years in patient care.`,
             experience_years: 15,
             rating: 4.8,
             is_active: true,
@@ -183,8 +224,8 @@ export default function SymptomAnalysis() {
   };
 
   const handleBookAppointment = (doctorId: string) => {
-    // Navigate to clinic page with doctor parameter for booking
-    navigate(`/clinics?doctor=${doctorId}&book=true`);
+    // Navigate to doctors page for booking
+    navigate(`/doctors`);
   };
 
   const handleStartOver = () => {
@@ -240,12 +281,21 @@ export default function SymptomAnalysis() {
 
         {/* Content */}
         <div className="max-w-4xl mx-auto">
-          {currentStep === "input" && (
+          {currentStep === 'input' && (
             <div className="animate-fade-in">
               <SymptomInput
                 onSubmit={handleSymptomSubmit}
                 isLoading={submitSymptomMutation.isPending}
               />
+
+              {errorMessage && (
+                <div className="mt-4">
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>{errorMessage}</AlertDescription>
+                  </Alert>
+                </div>
+              )}
 
               {/* Disclaimer */}
               <div className="mt-6">
@@ -259,7 +309,7 @@ export default function SymptomAnalysis() {
             </div>
           )}
 
-          {currentStep === "analyzing" && (
+          {currentStep === 'analyzing' && (
             <div className="text-center py-12 animate-fade-in">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -273,7 +323,7 @@ export default function SymptomAnalysis() {
             </div>
           )}
 
-          {currentStep === "results" && analysisData && doctor && clinic && (
+          {currentStep === 'results' && analysisData && doctor && clinic && (
             <div className="animate-fade-in space-y-6">
               {/* Success Message */}
               <Alert className="border-green-200 bg-green-50">
@@ -309,13 +359,31 @@ export default function SymptomAnalysis() {
                 <h3 className="text-lg font-semibold text-green-900 mb-2">
                   {t('symptomAnalysis.results.aiAnalysis')}
                 </h3>
+
+                {/* Check if this is fallback analysis */}
+                {rawGeminiResponse && JSON.parse(rawGeminiResponse).note && (
+                  <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-4">
+                    <div className="flex">
+                      <div className="py-1">
+                        <svg className="fill-current h-6 w-6 text-yellow-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                          <path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-bold">Service Temporarily Unavailable</p>
+                        <p className="text-sm">Our AI analysis service is currently experiencing high demand. The following is a basic automated assessment. For comprehensive analysis, please try again later or consult a healthcare professional directly.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <p className="text-green-800"><strong>{t('symptomAnalysis.results.analysis')}:</strong> {analysisData.analysisResult}</p>
-                    <p className="text-green-800"><strong>{t('symptomAnalysis.results.confidence')}:</strong> {analysisData.confidence}%</p>
+                    <p className="text-green-800"><strong>{t('symptomAnalysis.results.confidence')}:</strong> {(typeof analysisData.confidence === 'number' ? analysisData.confidence.toFixed(1) : analysisData.confidence)}%</p>
                     <p className="text-green-800"><strong>{t('symptomAnalysis.results.urgency')}:</strong> {analysisData.urgency}</p>
-                    {analysisData.recommended_specialty && (
-                      <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendedSpecialty')}:</strong> {analysisData.recommended_specialty}</p>
+                    {analysisData.recommendedSpecialty && (
+                      <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendedSpecialty')}:</strong> {analysisData.recommendedSpecialty}</p>
                     )}
                     {analysisData.recommendations && (
                       <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendations')}:</strong> {analysisData.recommendations}</p>
@@ -338,11 +406,11 @@ export default function SymptomAnalysis() {
                             return (
                               <>
                                 <p className="text-green-800"><strong>{t('symptomAnalysis.results.analysis')}:</strong> {parsed.analysis}</p>
-                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.confidence')}:</strong> {parsed.confidence}</p>
-                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.urgency')}:</strong> {parsed.urgency}</p>
-                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendedSpecialty')}:</strong> {parsed.recommendedSpecialty}</p>
-                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendations')}:</strong> {parsed.recommendations}</p>
-                                  <p className="text-green-800"><strong>{t('symptomAnalysis.results.possibleConditions')}:</strong> {Array.isArray(parsed.possibleConditions) ? parsed.possibleConditions.join(', ') : parsed.possibleConditions}</p>
+                                <p className="text-green-800"><strong>{t('symptomAnalysis.results.confidence')}:</strong> {parsed.confidence}</p>
+                                <p className="text-green-800"><strong>{t('symptomAnalysis.results.urgency')}:</strong> {parsed.urgency}</p>
+                                <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendedSpecialty')}:</strong> {parsed.recommendedSpecialty}</p>
+                                <p className="text-green-800"><strong>{t('symptomAnalysis.results.recommendations')}:</strong> {parsed.recommendations}</p>
+                                <p className="text-green-800"><strong>{t('symptomAnalysis.results.possibleConditions')}:</strong> {Array.isArray(parsed.possibleConditions) ? parsed.possibleConditions.join(', ') : parsed.possibleConditions}</p>
                               </>
                             );
                           } catch (e) {

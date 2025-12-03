@@ -1,7 +1,11 @@
-# TODO: Header and Chatbot Adjustments
+# Restrict Users to One Appointment at a Time
 
 ## Tasks
-- [x] Edit client/src/components/layout/header.tsx: Add margin-right to the logo Link to increase gap between "Find My Clinic" and emergency button.
-- [x] Edit client/src/components/ui/chatbot.tsx: Remove dragging functionality and set fixed positioning at bottom right.
-- [x] Test the changes in the browser to verify header layout and chatbot position.
-- [x] Update translation functions in patients.tsx, clinics.tsx, and clinic-card.tsx to accept i18n as parameter for proper language switching.
+- [ ] Modify clinics.tsx to check for existing active appointments before booking
+- [ ] Add appointment conflict dialog in clinics.tsx
+- [ ] Modify doctors.tsx to check for existing active appointments before booking
+- [ ] Add appointment conflict dialog in doctors.tsx
+- [ ] Test booking flows for authenticated users
+- [ ] Test booking flows for anonymous users
+- [ ] Verify proper cancellation of previous appointments
+- [ ] Ensure error handling for edge cases

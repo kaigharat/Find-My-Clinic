@@ -10,6 +10,7 @@ import Home from "@/pages/home";
 import Auth from "@/pages/auth";
 
 import Clinics from "@/pages/clinics";
+import Doctors from "@/pages/doctors";
 import Patients from "@/pages/patients";
 import About from "@/pages/about";
 import SymptomAnalysis from "@/pages/symptom-analysis";
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/auth" component={Auth} />
       <Route path="/patient-info/:id" component={PatientInfo} />
       <Route path="/clinics" component={Clinics} />
+      <Route path="/doctors" component={Doctors} />
       <Route path="/about" component={About} />
       <Route path="/queue-status" component={QueueStatus} />
       <Route path="/patient/:id" component={PatientInfo} />

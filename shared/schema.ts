@@ -67,12 +67,13 @@ export type Doctor = {
   name: string;
   email: string;
   phone: string;
-  clinicId: string;
+  clinic_id: string;
+  specialization: string;
   bio: string | null;
-  experience: number | null;
+  experience_years: number | null;
   rating: number | null;
-  isActive: boolean | null;
-  createdAt: string | null;
+  is_active: boolean | null;
+  created_at: string | null;
 };
 
 export type Specialty = {
