@@ -1,7 +1,7 @@
 # 🚀 COMPLETE GEMINI API SETUP GUIDE (Step-by-Step)
 
 ## ❌ CURRENT STATUS
-Your API key `AIzaSyDrFu1d7_v1kVny74Cr0kXVLHX_ZvvcMWY` returns **404 Not Found** error.
+Your current API key returns **404 Not Found** error.
 This means the Generative Language API is NOT enabled for your Google Cloud project.
 
 ## ✅ SOLUTION: Enable Generative Language API
